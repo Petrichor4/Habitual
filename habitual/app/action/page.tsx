@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 const categories = createListCollection({
   items: [
@@ -61,6 +62,7 @@ export default function AddData() {
 
   return (
     <main className="flex justify-center items-center min-h-screen h-full w-full relative">
+      <Link href={"/"} className="absolute top-4 left-2"><Button>Back to home</Button></Link>
       <AnimatePresence>
         {alert && (
           <motion.div

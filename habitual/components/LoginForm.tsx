@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Stack, Button, Alert } from "@chakra-ui/react";
+import { Input, Stack, Button, Alert, Text } from "@chakra-ui/react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
@@ -74,10 +74,15 @@ export default function LoginPage() {
       return;
     }
     setLoading(false);
+    window.location.assign('/')
   };
 
   return (
-    <main className="flex justify-center items-center h-screen">
+    <main className="flex flex-wrap justify-center items-center h-screen">
+      <div className="w-4/5 text-center">
+        <h1>Welcome to Habitual</h1>
+        <Text className="">Create an account or log in to start your motivation journey.</Text>
+      </div>
       {signUp ? (
         <form onSubmit={handleSignUp} className="w-4/5 h-fit">
           <Stack>

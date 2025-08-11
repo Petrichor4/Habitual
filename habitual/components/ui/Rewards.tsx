@@ -1,10 +1,12 @@
 import { Incentives } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-export default function Rewards({points}:{points: number}) {
+export default function Rewards({ points }: { points: number }) {
   const [incentives, setIncentives] = useState<Incentives[]>([]);
+  const [alert, setAlert] = useState("");
 
   useEffect(() => {
     const fetchIncentives = async () => {
@@ -17,33 +19,53 @@ export default function Rewards({points}:{points: number}) {
     fetchIncentives();
   }, []);
 
-const handleRedeem = async (pointsToRedeem: number) => {
-  // fetch current points (assuming single row)
-  const { data, error } = await supabase
-    .from('rewarded_points')
-    .select('points')
-    .single();
+  const handleRedeem = async (pointsToRedeem: number) => {
+    // fetch current points (assuming single row)
+    const { data, error } = await supabase
+      .from("rewarded_points")
+      .select("points")
+      .single();
 
-  if (error) {
-    console.warn('Error fetching points:', error);
-    return;
-  }
+    if (error) {
+      console.warn("Error fetching points:", error);
+      return;
+    }
 
-  const currentPoints = Number(data?.points);
-  const newPoints = currentPoints - pointsToRedeem;
+    const currentPoints = Number(data?.points);
+    const newPoints = currentPoints - pointsToRedeem;
 
-  const { error: updateError } = await supabase
-    .from('rewarded_points')
-    .update({ points: newPoints })
-    .eq('id', 2);
+    if (currentPoints >= points) {
+      setAlert("You do not have enough points for this reward");
+      setTimeout(() => {
+        setAlert("");
+      }, 3000);
+      return;
+    }
 
-  if (updateError) {
-    console.warn('There was an error updating points:', updateError);
-  }
-};
+    const { error: updateError } = await supabase
+      .from("rewarded_points")
+      .update({ points: newPoints })
+      .eq("id", 2);
+
+    if (updateError) {
+      console.warn("There was an error updating points:", updateError);
+    }
+  };
 
   return (
-    <section className="flex ">
+    <section className="flex justify-center">
+      <AnimatePresence>
+        {alert && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-2 w-[300px] h-[100px] bg-black text-white z-10 rounded shadow flex justify-center items-center text-center"
+          >
+            {alert}
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div
         className="flex flex-wrap gap-2"
         style={{ marginTop: 8, marginBottom: 16 }}
@@ -51,7 +73,9 @@ const handleRedeem = async (pointsToRedeem: number) => {
         {incentives.map((item) => (
           <div
             key={item.id}
-            className={`${ points >= item.cost ? 'bg-gray-100' : 'bg-gray-300 opacity-50' } w-full h-16 rounded-sm flex justify-between items-center shadow`}
+            className={`${
+              points >= item.cost ? "bg-gray-100" : "bg-gray-300 opacity-50"
+            } w-full h-16 rounded-sm flex justify-between items-center shadow`}
             style={{ marginInline: 8, paddingInline: 8 }}
           >
             {item.title}
