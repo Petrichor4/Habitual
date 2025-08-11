@@ -34,7 +34,7 @@ export default function Rewards({ points }: { points: number }) {
     const currentPoints = Number(data?.points);
     const newPoints = currentPoints - pointsToRedeem;
 
-    if (currentPoints >= points) {
+    if (currentPoints < pointsToRedeem) {
       setAlert("You do not have enough points for this reward");
       setTimeout(() => {
         setAlert("");
