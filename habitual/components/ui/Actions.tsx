@@ -144,6 +144,7 @@ export default function Actions() {
               onCancel={() => setEdit(null)}
               onEdit={() => {
                 const action = actions.find((item) => item.id === edit);
+                console.log(action)
                 if (action && typeof action.id === "number") {
                   handleEdit(
                     action.id,

@@ -79,90 +79,92 @@ export default function LoginPage() {
 
   return (
     <main className="flex flex-wrap justify-center items-center h-screen">
-      <div className="w-4/5 text-center">
-        <h1>Welcome to Habitual</h1>
-        <Text className="">Create an account or log in to start your motivation journey.</Text>
+      <div className="w-4/5 flex flex-wrap justify-center gap-12">
+        <div className="text-center">
+          <h1>Welcome to Habitual</h1>
+          <Text className="">Create an account or log in to start your motivation journey.</Text>
+        </div>
+        {signUp ? (
+          <form onSubmit={handleSignUp} className="w-4/5 h-fit">
+            <Stack>
+              <h1 className="text-current text-5xl">Sign Up</h1>
+              <Input variant={"subtle"} name="email" placeholder="Email" />
+              <PasswordInput
+                variant={"subtle"}
+                name="password"
+                placeholder="Password"
+              />
+              <PasswordInput
+                variant={"subtle"}
+                name="confirm-password"
+                placeholder="Confirm Password"
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant={"subtle"} className="flex-1">
+                  Cancel
+                </Button>
+                <Button
+                  variant={"subtle"}
+                  loading={loading}
+                  loadingText="Signing Up"
+                  type="submit"
+                  className="flex-1"
+                >
+                  Sign Up
+                </Button>
+              </div>
+              {alert && <Alert.Root variant={"outline"}>{alert}</Alert.Root>}
+              <h2 className="max-w-[300px]">
+                Have an account?
+                <a
+                  className="hover:cursor-pointer"
+                  onClick={() => setSignUp(false)}
+                >
+                  {" "}
+                  Click here to sign in
+                </a>
+              </h2>
+            </Stack>
+          </form>
+        ) : (
+          <form onSubmit={handleLogin}>
+            <Stack>
+              <h1 className="text-current text-5xl">Sign In</h1>
+              <Input variant={"subtle"} name="email" placeholder="Email" />
+              <PasswordInput
+                variant={"subtle"}
+                name="password"
+                placeholder="Password"
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant={"subtle"} className="flex-1">
+                  Cancel
+                </Button>
+                <Button
+                  variant={"subtle"}
+                  loading={loading}
+                  loadingText="Signing In"
+                  type="submit"
+                  className="flex-1"
+                >
+                  Sign In
+                </Button>
+              </div>
+              {alert && <Alert.Root variant={"outline"}>{alert}</Alert.Root>}
+              <h2>
+                Dont have an account?
+                <a
+                  className="hover:cursor-pointer"
+                  onClick={() => setSignUp(true)}
+                >
+                  {" "}
+                  Click here to sign up
+                </a>
+              </h2>
+            </Stack>
+          </form>
+        )}
       </div>
-      {signUp ? (
-        <form onSubmit={handleSignUp} className="w-4/5 h-fit">
-          <Stack>
-            <h1 className="text-current text-5xl">Sign Up</h1>
-            <Input variant={"subtle"} name="email" placeholder="Email" />
-            <PasswordInput
-              variant={"subtle"}
-              name="password"
-              placeholder="Password"
-            />
-            <PasswordInput
-              variant={"subtle"}
-              name="confirm-password"
-              placeholder="Confirm Password"
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant={"subtle"} className="flex-1">
-                Cancel
-              </Button>
-              <Button
-                variant={"subtle"}
-                loading={loading}
-                loadingText="Signing Up"
-                type="submit"
-                className="flex-1"
-              >
-                Sign Up
-              </Button>
-            </div>
-            {alert && <Alert.Root variant={"outline"}>{alert}</Alert.Root>}
-            <h2 className="max-w-[300px]">
-              Have an account?
-              <a
-                className="hover:cursor-pointer"
-                onClick={() => setSignUp(false)}
-              >
-                {" "}
-                Click here to sign in
-              </a>
-            </h2>
-          </Stack>
-        </form>
-      ) : (
-        <form onSubmit={handleLogin}>
-          <Stack>
-            <h1 className="text-current text-5xl">Sign In</h1>
-            <Input variant={"subtle"} name="email" placeholder="Email" />
-            <PasswordInput
-              variant={"subtle"}
-              name="password"
-              placeholder="Password"
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant={"subtle"} className="flex-1">
-                Cancel
-              </Button>
-              <Button
-                variant={"subtle"}
-                loading={loading}
-                loadingText="Signing In"
-                type="submit"
-                className="flex-1"
-              >
-                Sign In
-              </Button>
-            </div>
-            {alert && <Alert.Root variant={"outline"}>{alert}</Alert.Root>}
-            <h2>
-              Dont have an account?
-              <a
-                className="hover:cursor-pointer"
-                onClick={() => setSignUp(true)}
-              >
-                {" "}
-                Click here to sign up
-              </a>
-            </h2>
-          </Stack>
-        </form>
-      )}
     </main>
   );
 }

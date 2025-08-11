@@ -43,6 +43,7 @@ export default function Home() {
         setLoading(false)
         setUser(user);
       }
+      setLoading(false)
     };
     fetchUser();
   },[]);
@@ -51,7 +52,7 @@ export default function Home() {
     return (
     <VStack className="w-full h-screen flex justify-center items-center">
       <Spinner animationDuration={'0.8s'} />
-      <Text>loading...</Text>
+      <Text>Loading...</Text>
     </VStack>
   )
   }

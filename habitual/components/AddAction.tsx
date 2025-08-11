@@ -13,6 +13,7 @@ import {
 import { FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Action } from "@/lib/definitions";
+import { supabase } from "@/lib/supabaseClient";
 
 const categories = createListCollection({
   items: [
@@ -28,32 +29,29 @@ export default function ActionForm({
   edit,
   action,
   onCancel,
-  onEdit,
 }: {
   edit: boolean;
   action?: Action;
   onCancel?: () => void;
-  onEdit?: () => void;
 }) {
   const [type, setType] = useState(categories.items[0].value);
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState("");
+  const [alert, setAlert] = useState('');
+  const [actionTitle, setActionTitle] = useState('');
+  const [reward, setReward] = useState(0)
 
   console.log(type);
 
   const handleAddAction = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const action = formData.get("action")?.toString().trim();
-    const reward = Number(formData.get("reward"));
 
     if (!type || !action || Number.isNaN(reward)) {
       return;
     }
 
     try {
-      await addAction(type, action, reward);
+      await addAction(type, actionTitle, reward);
       setAlert("Action added successfully");
       setTimeout(() => {
         setAlert("");
@@ -71,6 +69,18 @@ export default function ActionForm({
       return;
     }
   };
+
+    const handleEdit = async (
+    ) => {
+      const { error } = await supabase
+        .from("actions")
+        .update({ type, title: actionTitle, reward })
+        .eq("id", action?.id);
+      if (error) return console.warn(error);
+      if (onCancel) onCancel();
+      window.location.assign('/')
+    };
+  
 
   return (
     <main className="flex justify-center items-center h-fit w-full relative">
@@ -119,14 +129,14 @@ export default function ActionForm({
               </Select.Positioner>
             </Portal>
           </Select.Root>
-          <Input variant={"subtle"} name="action" placeholder="Action" defaultValue={action?.title} />
+          <Input variant={"subtle"} onChange={(e) => setActionTitle(e.currentTarget.value)} placeholder="Action" defaultValue={action?.title} />
           <NumberInput.Root step={5}>
             <NumberInput.Control />
-            <NumberInput.Input name="reward" placeholder="Reward" defaultValue={action?.reward} />
+            <NumberInput.Input onChange={(e) => setReward(Number(e.currentTarget.value))} placeholder="Reward" defaultValue={action?.reward} />
           </NumberInput.Root>
           {edit && <Button onClick={onCancel}>Cancel</Button>}
           {edit ? (
-            <Button loading={loading} loadingText="Submitting edit" onClick={onEdit}>
+            <Button loading={loading} loadingText="Submitting edit" onClick={handleEdit}>
             Edit Action
           </Button>
           ) : (<Button type="submit" loading={loading} loadingText="Adding action">
