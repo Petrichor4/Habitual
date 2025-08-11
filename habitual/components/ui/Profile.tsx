@@ -6,7 +6,7 @@ import { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-export default function Profile({user}:{user: User}) {
+export default function Profile({ user }: { user: User }) {
   return (
     <motion.div
       initial={{ x: "100vw" }}
@@ -17,15 +17,20 @@ export default function Profile({user}:{user: User}) {
     >
       <section>
         <div className="flex flex-wrap justify-center gap-2">
-          {!user && <Link href={"/login"} className="w-full text-center">Sign In</Link>}
-          <Link href={"/action"} className="w-full text-center">Add Action</Link>
-          {user && <Button
-            onClick={() => {
-              supabase.auth.signOut();
-            }}
-          >
-            Sign Out
-          </Button>}
+          {!user && (
+            <Link href={"/login"} className="w-full text-center">
+              Sign In
+            </Link>
+          )}
+          {user && (
+            <Button
+              onClick={() => {
+                supabase.auth.signOut();
+              }}
+            >
+              Sign Out
+            </Button>
+          )}
         </div>
       </section>
     </motion.div>

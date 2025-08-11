@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { Action } from "@/lib/definitions";
 
 const categories = createListCollection({
   items: [
@@ -24,7 +24,17 @@ const categories = createListCollection({
   ],
 });
 
-export default function AddData() {
+export default function ActionForm({
+  edit,
+  action,
+  onCancel,
+  onEdit,
+}: {
+  edit: boolean;
+  action?: Action;
+  onCancel?: () => void;
+  onEdit?: () => void;
+}) {
   const [type, setType] = useState(categories.items[0].value);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState("");
@@ -51,7 +61,9 @@ export default function AddData() {
       setLoading(false);
     } catch (error) {
       console.warn(error);
-      setAlert(`There was an error adding this action: ${error}`);
+      if (error) {
+        setAlert(`There was an error adding this action: ${error}`);
+      }
       setTimeout(() => {
         setAlert("");
       });
@@ -61,8 +73,7 @@ export default function AddData() {
   };
 
   return (
-    <main className="flex justify-center items-center min-h-screen h-full w-full relative">
-      <Link href={"/"} className="absolute top-4 left-2"><Button>Back to home</Button></Link>
+    <main className="flex justify-center items-center h-fit w-full relative">
       <AnimatePresence>
         {alert && (
           <motion.div
@@ -96,7 +107,10 @@ export default function AddData() {
               <Select.Positioner>
                 <Select.Content>
                   {categories.items.map((item) => (
-                    <Select.Item item={item} key={item.value}>
+                    <Select.Item
+                      item={item}
+                      key={item.value}
+                    >
                       {item.label}
                       <Select.ItemIndicator />
                     </Select.Item>
@@ -105,14 +119,19 @@ export default function AddData() {
               </Select.Positioner>
             </Portal>
           </Select.Root>
-          <Input variant={"subtle"} name="action" placeholder="Action" />
+          <Input variant={"subtle"} name="action" placeholder="Action" defaultValue={action?.title} />
           <NumberInput.Root step={5}>
             <NumberInput.Control />
-            <NumberInput.Input name="reward" placeholder="Reward" />
+            <NumberInput.Input name="reward" placeholder="Reward" defaultValue={action?.reward} />
           </NumberInput.Root>
-          <Button type="submit" loading={loading} loadingText="Adding action">
-            Add Action
+          {edit && <Button onClick={onCancel}>Cancel</Button>}
+          {edit ? (
+            <Button loading={loading} loadingText="Submitting edit" onClick={onEdit}>
+            Edit Action
           </Button>
+          ) : (<Button type="submit" loading={loading} loadingText="Adding action">
+            Add Action
+          </Button>)}
         </Stack>
       </form>
     </main>

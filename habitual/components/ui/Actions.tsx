@@ -1,13 +1,39 @@
-import { CheckboxCard } from "@chakra-ui/react";
+import { Button, CheckboxCard, IconButton } from "@chakra-ui/react";
 import { Action } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
+import {
+  IoCreateOutline,
+  IoPencilOutline,
+  IoTrashOutline,
+} from "react-icons/io5";
+import {
+  AnimatePresence,
+  motion,
+  animate,
+  useMotionValue,
+} from "framer-motion";
+import ActionForm from "../AddAction";
 
 export default function Actions() {
   const [actions, setActions] = useState<Action[]>([]);
   const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
   const [user, setUser] = useState<User>();
+  const [addAction, setAddAction] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [edit, setEdit] = useState<number | null>();
+  const x = useMotionValue(0);
+
+  const openCard = () => {
+    animate(x, -100, { type: "spring", stiffness: 300, damping: 30 });
+    setIsOpen(true);
+  };
+
+  const closeCard = () => {
+    animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
+    setIsOpen(false);
+  };
 
   console.log(checkedMap);
 
@@ -63,27 +89,130 @@ export default function Actions() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    const { error } = await supabase.from("actions").delete().eq("id", id);
+    if (error) return console.warn(error);
+    setActions((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const handleEdit = async (
+    id: number,
+    type: string,
+    reward: number,
+    title: string
+  ) => {
+    const { error } = await supabase
+      .from("actions")
+      .update({ type, title, reward })
+      .eq("id", id);
+      setEdit(null)
+    if (error) return console.warn(error);
+  };
+
   return (
     <div className="z-10">
-      {actions.map((item) => (
-        <CheckboxCard.Root
-          key={item.id}
-          m={2}
-          variant={"surface"}
-          checked={checkedMap[item.id] ?? false}
-          onCheckedChange={() => toggleCheck(item.id)}
+      <div
+        className="w-full h-fit flex justify-end z-10"
+        style={{ marginTop: 8, paddingInlineEnd: 8 }}
+      >
+        <IconButton
+          onClick={() => setAddAction((prev) => !prev)}
+          style={{ paddingInline: 6 }}
         >
-          <CheckboxCard.HiddenInput />
-          <CheckboxCard.Control>
-            <CheckboxCard.Content>
-              <CheckboxCard.Label>{item.title}</CheckboxCard.Label>
-              <CheckboxCard.Description>
-                {item.reward}pts
-              </CheckboxCard.Description>
-            </CheckboxCard.Content>
-            <CheckboxCard.Indicator />
-          </CheckboxCard.Control>
-        </CheckboxCard.Root>
+          <IoCreateOutline />
+          Add Action
+        </IconButton>
+      </div>
+      <AnimatePresence>
+        {addAction && (
+          <motion.div
+            initial={{ opacity: 0, y: -15, zIndex: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15, zIndex: -10 }}
+            className="flex justify-center w-full"
+          >
+            <ActionForm edit={false} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {edit && (
+          <motion.div className="fixed top-20 z-20 w-full bg-white/80">
+            <ActionForm
+              edit={!!edit}
+              action={actions.find((item) => item.id === edit)}
+              onCancel={() => setEdit(null)}
+              onEdit={() => {
+                const action = actions.find((item) => item.id === edit);
+                if (action && typeof action.id === "number") {
+                  handleEdit(
+                    action.id,
+                    action.type,
+                    action.reward,
+                    action.title
+                  );
+                }
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {actions.map((item) => (
+        <div key={item.id} className="relative overflow-hidden w-full">
+          {/* Background buttons */}
+          <div className="absolute top-0 right-2 flex items-center gap-1 h-full z-0">
+            <Button
+              size="sm"
+              colorPalette="blue"
+              h={"80%"}
+              onClick={() => setEdit(item.id)}
+            >
+              <IoPencilOutline />
+              Edit
+            </Button>
+            <Button
+              size="sm"
+              colorPalette="red"
+              h={"80%"}
+              p={1}
+              onClick={() => handleDelete(item.id)}
+            >
+              <IoTrashOutline />
+              Delete
+            </Button>
+          </div>
+          <motion.div
+            drag={"x"}
+            dragElastic={0.5}
+            dragConstraints={{ left: -170, right: 0 }}
+            onDragEnd={(e, info) => {
+              if (info.offset.x < -50) {
+                openCard();
+              } else {
+                closeCard();
+              }
+            }}
+            className="relative z-10 bg-white"
+          >
+            <CheckboxCard.Root
+              m={2}
+              variant={"surface"}
+              checked={checkedMap[item.id] ?? false}
+              onCheckedChange={() => toggleCheck(item.id)}
+            >
+              <CheckboxCard.HiddenInput />
+              <CheckboxCard.Control>
+                <CheckboxCard.Content>
+                  <CheckboxCard.Label>{item.title}</CheckboxCard.Label>
+                  <CheckboxCard.Description>
+                    {item.reward}pts
+                  </CheckboxCard.Description>
+                </CheckboxCard.Content>
+                <CheckboxCard.Indicator />
+              </CheckboxCard.Control>
+            </CheckboxCard.Root>
+          </motion.div>
+        </div>
       ))}
     </div>
   );

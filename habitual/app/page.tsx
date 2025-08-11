@@ -17,18 +17,6 @@ export default function Home() {
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(false)
 
-  // const channelA = supabase
-  // .channel('schema-db-changes')
-  // .on(
-  //   'postgres_changes',
-  //   {
-  //     event: '*',
-  //     schema: 'public',
-  //   },
-  //   (payload) => console.log(payload)
-  // )
-  // .subscribe()
-
   console.log(points);
 
   useEffect(() => {
@@ -57,7 +45,7 @@ export default function Home() {
       }
     };
     fetchUser();
-  });
+  },[]);
 
   if (loading && !user) {
     return (
@@ -73,7 +61,7 @@ export default function Home() {
       {user ? (
         <main>
           <div className="h-20 w-full"></div>
-          <header className="h-20 w-full flex justify-center items-center bg-gray-100/80 shadow fixed top-0 z-10">
+          <header className="h-20 w-full flex justify-center items-center bg-gray-100/80 shadow fixed top-0 z-20">
             {user && (
               <Text className="absolute left-10">{points ?? 0} Pts</Text>
             )}
