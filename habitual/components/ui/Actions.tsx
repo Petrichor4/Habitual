@@ -95,20 +95,6 @@ export default function Actions() {
     setActions((prev) => prev.filter((a) => a.id !== id));
   };
 
-  const handleEdit = async (
-    id: number,
-    type: string,
-    reward: number,
-    title: string
-  ) => {
-    const { error } = await supabase
-      .from("actions")
-      .update({ type, title, reward })
-      .eq("id", id);
-      setEdit(null)
-    if (error) return console.warn(error);
-  };
-
   return (
     <div className="z-10">
       <div
@@ -142,18 +128,6 @@ export default function Actions() {
               edit={!!edit}
               action={actions.find((item) => item.id === edit)}
               onCancel={() => setEdit(null)}
-              onEdit={() => {
-                const action = actions.find((item) => item.id === edit);
-                console.log(action)
-                if (action && typeof action.id === "number") {
-                  handleEdit(
-                    action.id,
-                    action.type,
-                    action.reward,
-                    action.title
-                  );
-                }
-              }}
             />
           </motion.div>
         )}
