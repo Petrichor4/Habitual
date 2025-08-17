@@ -9,15 +9,13 @@ import { Spinner, Text, VStack } from "@chakra-ui/react";
 import { supabase } from "@/lib/supabaseClient";
 import { User } from "@supabase/supabase-js";
 import LoginPage from "@/components/LoginForm";
-// import { User } from "@supabase/supabase-js";
 
 export default function Home() {
   const [popout, setPopout] = useState(false);
   const [points, setPoints] = useState();
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(false)
-
-  console.log(points);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     const fetchPoints = async () => {
@@ -31,7 +29,7 @@ export default function Home() {
       }
     };
     fetchPoints();
-  }, []);
+  }, [update]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -78,7 +76,7 @@ export default function Home() {
               {popout && <Profile user={user!} />}
             </AnimatePresence>
           </header>
-          <Tab points={points ?? 0} />
+          <Tab refresh={() => setUpdate((prev) => !prev)} points={points ?? 0} />
         </main>
       ) : (
         <AnimatePresence>

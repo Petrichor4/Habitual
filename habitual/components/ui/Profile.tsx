@@ -7,6 +7,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function Profile({ user }: { user: User }) {
+
+  const handleSignOut = () => {
+    supabase.auth.signOut()
+    window.location.assign('/')
+  }
+
   return (
     <motion.div
       initial={{ x: "100vw" }}
@@ -24,9 +30,7 @@ export default function Profile({ user }: { user: User }) {
           )}
           {user && (
             <Button
-              onClick={() => {
-                supabase.auth.signOut();
-              }}
+              onClick={handleSignOut}
             >
               Sign Out
             </Button>

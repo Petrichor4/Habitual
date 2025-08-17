@@ -71,6 +71,7 @@ export default function LoginPage() {
 
     if (error) {
       console.warn("There was an error logging in:", error);
+      setLoading(false)
       return;
     }
     setLoading(false);

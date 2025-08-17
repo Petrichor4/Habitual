@@ -8,7 +8,7 @@ import Rewards from "./Rewards";
 const tabs = ['Actions','Rewards'];
 const sessionStorageKey = "selected-tab";
 
-export default function Tab({points}:{points: number}) {
+export default function Tab({points, refresh}:{points: number, refresh: () => void}) {
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function Tab({points}:{points: number}) {
                 {tab}
                 {tab === selectedTab ? (
                   <motion.div
-                    className="absolute -bottom-[10px] lg:-bottom-1.5 left-0 right-0 h-[3px] bg-black dark:bg-white"
+                    className="absolute -bottom-[8px] lg:-bottom-1.5 left-0 right-0 h-[3px] bg-black dark:bg-white"
                     layoutId="underline"
                   />
                 ) : null}
@@ -52,7 +52,7 @@ export default function Tab({points}:{points: number}) {
           <span className="h-[1px] w-4/5 bg-black dark:bg-white rounded"></span>
           <div className="w-full">
             {selectedTab === 'Actions' && <Actions />}
-            {selectedTab === 'Rewards' && <Rewards points={points} /> }
+            {selectedTab === 'Rewards' && <Rewards refresh={refresh} points={points} /> }
           </div>
         </section>
       </main>

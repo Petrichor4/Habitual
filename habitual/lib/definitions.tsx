@@ -21,3 +21,9 @@ export interface Pending {
     is_checked: boolean;
     action_id: number;
 }
+
+export interface Category {
+    id: string;
+    name: string;
+    actions?: Action[];
+}

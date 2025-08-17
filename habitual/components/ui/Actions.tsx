@@ -1,69 +1,124 @@
-import { Button, CheckboxCard, IconButton } from "@chakra-ui/react";
-import { Action } from "@/lib/definitions";
+import { Action, Category } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
 import { useState, useEffect } from "react";
 import { User } from "@supabase/supabase-js";
-import {
-  IoCreateOutline,
-  IoPencilOutline,
-  IoTrashOutline,
-} from "react-icons/io5";
-import {
-  AnimatePresence,
-  motion,
-  animate,
-  useMotionValue,
-} from "framer-motion";
-import ActionForm from "../AddAction";
+import { IoCreateOutline } from "react-icons/io5";
+import { AnimatePresence, motion } from "framer-motion";
+import ActionForm from "../ActionForm";
+import ActionCard from "./ActionCard";
+import AddCat from "./AddCat";
+import useDbChange from "../DbChange";
 
 export default function Actions() {
+  const [loading, setLoading] = useState(false);
   const [actions, setActions] = useState<Action[]>([]);
   const [checkedMap, setCheckedMap] = useState<{ [key: number]: boolean }>({});
   const [user, setUser] = useState<User>();
-  const [addAction, setAddAction] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [addCat, setAddCat] = useState(false);
+  const [addAction, setAddAction] = useState<string | null>(null);
   const [edit, setEdit] = useState<number | null>();
-  const x = useMotionValue(0);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const { changed, setChanged } = useDbChange({ table: "actions" });
 
-  const openCard = () => {
-    animate(x, -100, { type: "spring", stiffness: 300, damping: 30 });
-    setIsOpen(true);
+  const toggleCategory = (category: string) => {
+    setOpenCategory((prev) => (prev === category ? null : category));
   };
 
-  const closeCard = () => {
-    animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
-    setIsOpen(false);
-  };
-
-  console.log(checkedMap);
+  console.log(actions);
 
   useEffect(() => {
-    const fetchActions = async () => {
-      const { data, error } = await supabase.from("actions").select();
-      if (error) {
-        console.warn();
-        return;
-      }
-      if (data) {
-        console.log(data);
-        setActions(data);
-        const stateMap: { [key: number]: boolean } = {};
-        data.forEach((a) => (stateMap[a.id] = a.done));
-        setCheckedMap(stateMap);
-        return;
-      }
-    };
-    fetchActions();
-    const getUser = async () => {
+    if (changed) {
+      console.log("Something changed in actions → refresh!");
+      setChanged(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [changed]);
+
+  useEffect(() => {
+    const getUserAndData = async () => {
+      setLoading(true)
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        return;
-      }
+        setLoading(false)
+        return
+      };
+
       setUser(user);
+
+      // fetch actions for this user
+      const { data: actionData, error: actionError } = await supabase
+        .from("actions")
+        .select()
+        .eq("user_id", user.id);
+
+      if (actionError) console.error(actionError);
+      if (actionData) {
+        setActions(actionData);
+        const stateMap: { [key: number]: boolean } = {};
+        actionData.forEach((a) => (stateMap[a.id] = a.done));
+        setCheckedMap(stateMap);
+      }
+
+      // fetch categories
+      const { data: catData, error: catError } = await supabase
+        .from("categories")
+        .select()
+        .eq("user_id", user.id);
+
+      if (catError) console.error(catError);
+      if (catData) setCategories(catData);
+      setLoading(false)
     };
-    getUser();
+
+    getUserAndData();
+  }, [changed]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("categories-changes") // Choose a unique channel name
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "categories" }, // Listen to all events on 'your_table_name'
+        (payload) => {
+          console.log("Category change received!", payload);
+          // Update your component's state based on the payload
+          if (payload.eventType === "INSERT") {
+            setCategories((prevData) => [
+              ...prevData,
+              {
+                id: payload.new.id,
+                name: payload.new.name,
+                actions: payload.new.actions ?? [],
+              } as Category,
+            ]);
+          } else if (payload.eventType === "UPDATE") {
+            setCategories((prevData) =>
+              prevData.map((item) =>
+                item.id === payload.old.id
+                  ? ({
+                      id: payload.new.id,
+                      name: payload.new.name,
+                      actions: payload.new.actions ?? [],
+                    } as Category)
+                  : item
+              )
+            );
+          } else if (payload.eventType === "DELETE") {
+            setCategories((prevData) =>
+              prevData.filter((item) => item.id !== payload.old.id)
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    // Clean up the subscription when the component unmounts
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleCheckTask = async (id: number, isChecked: boolean) => {
@@ -101,29 +156,21 @@ export default function Actions() {
         className="w-full h-fit flex justify-end z-10"
         style={{ marginTop: 8, paddingInlineEnd: 8 }}
       >
-        <IconButton
-          onClick={() => setAddAction((prev) => !prev)}
-          style={{ paddingInline: 6 }}
+        <button
+          onClick={() => setAddCat((prev) => !prev)}
+          style={{ paddingInline: 6, fontSize: "small" }}
+          className="flex items-center gap-1"
         >
           <IoCreateOutline />
-          Add Action
-        </IconButton>
+          Add Category
+        </button>
       </div>
       <AnimatePresence>
-        {addAction && (
-          <motion.div
-            initial={{ opacity: 0, y: -15, zIndex: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15, zIndex: -10 }}
-            className="flex justify-center w-full"
-          >
-            <ActionForm edit={false} />
-          </motion.div>
-        )}
+        {addCat && <AddCat onClose={() => setAddCat(false)} />}
       </AnimatePresence>
       <AnimatePresence>
         {edit && (
-          <motion.div className="fixed top-20 z-20 w-full bg-white/80">
+          <motion.div className="fixed top-20 z-20 w-full bg-gray-100/90">
             <ActionForm
               edit={!!edit}
               action={actions.find((item) => item.id === edit)}
@@ -132,63 +179,89 @@ export default function Actions() {
           </motion.div>
         )}
       </AnimatePresence>
-      {actions.map((item) => (
-        <div key={item.id} className="relative overflow-hidden w-full">
-          {/* Background buttons */}
-          <div className="absolute top-0 right-2 flex items-center gap-1 h-full z-0">
-            <Button
-              size="sm"
-              colorPalette="blue"
-              h={"80%"}
-              onClick={() => setEdit(item.id)}
-            >
-              <IoPencilOutline />
-              Edit
-            </Button>
-            <Button
-              size="sm"
-              colorPalette="red"
-              h={"80%"}
-              p={1}
-              onClick={() => handleDelete(item.id)}
-            >
-              <IoTrashOutline />
-              Delete
-            </Button>
-          </div>
-          <motion.div
-            drag={"x"}
-            dragElastic={0.5}
-            dragConstraints={{ left: -170, right: 0 }}
-            onDragEnd={(e, info) => {
-              if (info.offset.x < -50) {
-                openCard();
-              } else {
-                closeCard();
-              }
-            }}
-            className="relative z-10 bg-white"
-          >
-            <CheckboxCard.Root
-              m={2}
-              variant={"surface"}
-              checked={checkedMap[item.id] ?? false}
-              onCheckedChange={() => toggleCheck(item.id)}
-            >
-              <CheckboxCard.HiddenInput />
-              <CheckboxCard.Control>
-                <CheckboxCard.Content>
-                  <CheckboxCard.Label>{item.title}</CheckboxCard.Label>
-                  <CheckboxCard.Description>
-                    {item.reward}pts
-                  </CheckboxCard.Description>
-                </CheckboxCard.Content>
-                <CheckboxCard.Indicator />
-              </CheckboxCard.Control>
-            </CheckboxCard.Root>
-          </motion.div>
+      {actions.length === 0 && !loading ? (
+        <div
+          className="flex justify-center text-gray-500"
+          style={{ marginTop: "8px" }}
+        >
+          <h4>Add a category to begin</h4>
         </div>
-      ))}
+      ) : (
+        <div>
+          {categories.map((type) => (
+            <motion.div
+              key={type.id}
+              className="bg-gray-100 rounded-md shadow"
+              style={{ margin: "8px", padding: "4px" }}
+            >
+              {/* Category header */}
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() => toggleCategory(type.name)}
+                style={{ padding: "12px", marginBlock: "8px" }}
+              >
+                <h2 className="font-semibold text-lg">{type.name}</h2>
+                <motion.span
+                  animate={{ rotate: openCategory === type.name ? 90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  ▶
+                </motion.span>
+              </div>
+              {openCategory === type.name && (
+                <div
+                  className="w-full h-fit flex justify-end z-10"
+                  style={{ marginTop: 8, paddingInlineEnd: 8 }}
+                >
+                  <button
+                    onClick={() =>
+                      setAddAction(addAction === type.name ? null : type.name)
+                    }
+                    style={{ paddingInline: 6, fontSize: "small" }}
+                    className="flex items-center gap-1"
+                  >
+                    <IoCreateOutline />
+                    Add action
+                  </button>
+                </div>
+              )}
+              <AnimatePresence>
+                {addAction === type.name && openCategory === type.name && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -15, zIndex: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15, zIndex: -10 }}
+                  >
+                    <ActionForm
+                      onCancel={() => setAddAction(null)}
+                      category={type}
+                      edit={false}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {openCategory === type.name && (
+                  <div>
+                    {actions
+                      .filter((action) => action.type === type.name)
+                      .map((item) => (
+                        <ActionCard
+                          key={item.id}
+                          item={item}
+                          checked={checkedMap[item.id] ?? false}
+                          onToggleCheck={toggleCheck}
+                          onEdit={(id) => setEdit(id)}
+                          onDelete={handleDelete}
+                        />
+                      ))}
+                  </div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
