@@ -4,9 +4,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
-export default function Profile({ user }: { user: User }) {
+export default function Profile({ user, onEdit }: { user: User, onEdit: () => void }) {
 
   const handleSignOut = () => {
     supabase.auth.signOut()
@@ -23,17 +22,18 @@ export default function Profile({ user }: { user: User }) {
     >
       <section>
         <div className="flex flex-wrap justify-center gap-2">
-          {!user && (
-            <Link href={"/login"} className="w-full text-center">
-              Sign In
-            </Link>
-          )}
           {user && (
-            <Button
-              onClick={handleSignOut}
-            >
-              Sign Out
-            </Button>
+            <div className="flex flex-wrap w-3/4 gap-1">
+              <Button className="w-full active:scale-95"
+              onClick={onEdit}>
+                Edit home page
+              </Button>
+              <Button className="w-full active:scale-95"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </div>
           )}
         </div>
       </section>

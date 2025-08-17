@@ -5,9 +5,9 @@ import { User } from "@supabase/supabase-js";
 import { IoCreateOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
 import ActionForm from "../ActionForm";
-import ActionCard from "./ActionCard";
 import AddCat from "./AddCat";
 import useDbChange from "../DbChange";
+import CategoryCard from "./CategoryCard";
 
 export default function Actions() {
   const [loading, setLoading] = useState(false);
@@ -21,11 +21,7 @@ export default function Actions() {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const { changed, setChanged } = useDbChange({ table: "actions" });
 
-  const toggleCategory = (category: string) => {
-    setOpenCategory((prev) => (prev === category ? null : category));
-  };
-
-  console.log(categories);
+  //   console.log(categories);
 
   useEffect(() => {
     if (changed) {
@@ -37,14 +33,14 @@ export default function Actions() {
 
   useEffect(() => {
     const getUserAndData = async () => {
-      setLoading(true)
+      setLoading(true);
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        setLoading(false)
-        return
-      };
+        setLoading(false);
+        return;
+      }
 
       setUser(user);
 
@@ -69,7 +65,7 @@ export default function Actions() {
 
       if (catError) console.error(catError);
       if (catData) setCategories(catData);
-      setLoading(false)
+      setLoading(false);
     };
 
     getUserAndData();
@@ -187,77 +183,20 @@ export default function Actions() {
         </div>
       ) : (
         <div>
-          {categories.map((type) => (
-            <motion.div
-              key={type.id}
-              className="bg-gray-100 rounded-md shadow"
-              style={{ margin: "8px", padding: "4px" }}
-            >
-              {/* Category header */}
-              <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleCategory(type.name)}
-                style={{ padding: "12px", marginBlock: "8px" }}
-              >
-                <h2 className="font-semibold text-lg">{type.name}</h2>
-                <motion.span
-                  animate={{ rotate: openCategory === type.name ? 90 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  ▶
-                </motion.span>
-              </div>
-              {openCategory === type.name && (
-                <div
-                  className="w-full h-fit flex justify-end z-10"
-                  style={{ marginTop: 8, paddingInlineEnd: 8 }}
-                >
-                  <button
-                    onClick={() =>
-                      setAddAction(addAction === type.name ? null : type.name)
-                    }
-                    style={{ paddingInline: 6, fontSize: "small" }}
-                    className="flex items-center gap-1"
-                  >
-                    <IoCreateOutline />
-                    Add action
-                  </button>
-                </div>
-              )}
-              <AnimatePresence>
-                {addAction === type.name && openCategory === type.name && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -15, zIndex: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -15, zIndex: -10 }}
-                  >
-                    <ActionForm
-                      onCancel={() => setAddAction(null)}
-                      category={type}
-                      edit={false}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <AnimatePresence>
-                {openCategory === type.name && (
-                  <div>
-                    {actions
-                      .filter((action) => action.type === type.name)
-                      .map((item) => (
-                        <ActionCard
-                          key={item.id}
-                          item={item}
-                          checked={checkedMap[item.id] ?? false}
-                          onToggleCheck={toggleCheck}
-                          onEdit={(id) => setEdit(id)}
-                          onDelete={handleDelete}
-                        />
-                      ))}
-                  </div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+          {categories.map((cat) => (
+            <CategoryCard
+              key={cat.id}
+              category={cat}
+              actions={actions}
+              openCategory={openCategory}
+              setOpenCategory={setOpenCategory}
+              addAction={addAction}
+              setAddAction={setAddAction}
+              checkedMap={checkedMap}
+              toggleCheck={toggleCheck}
+              onEdit={(id) => setEdit(id)}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       )}
