@@ -2,11 +2,13 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button, Input } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import GetUser from "../GetUser";
 
 export default function AddCat({ onClose }: { onClose: () => void}) {
   const [category, setCategory] = useState("");
   const [alert, setAlert] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = GetUser()
 
   const handleAddCat = async () => {
     if (!category) {
@@ -20,7 +22,7 @@ export default function AddCat({ onClose }: { onClose: () => void}) {
     setLoading(true)
     const { data: newCategory, error: categoryError } = await supabase
       .from("categories")
-      .insert({name: category})
+      .insert({user_id: user?.id ,name: category})
       .select()
     if (categoryError) console.error(categoryError);
     console.log("Created category:", newCategory);

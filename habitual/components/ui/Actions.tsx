@@ -25,7 +25,7 @@ export default function Actions() {
     setOpenCategory((prev) => (prev === category ? null : category));
   };
 
-  console.log(actions);
+  console.log(categories);
 
   useEffect(() => {
     if (changed) {
@@ -61,7 +61,6 @@ export default function Actions() {
         actionData.forEach((a) => (stateMap[a.id] = a.done));
         setCheckedMap(stateMap);
       }
-
       // fetch categories
       const { data: catData, error: catError } = await supabase
         .from("categories")
@@ -179,7 +178,7 @@ export default function Actions() {
           </motion.div>
         )}
       </AnimatePresence>
-      {actions.length === 0 && !loading ? (
+      {categories.length === 0 && !loading ? (
         <div
           className="flex justify-center text-gray-500"
           style={{ marginTop: "8px" }}
