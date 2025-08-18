@@ -5,7 +5,7 @@ import { Button } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
 
-export default function Profile({ user, onEdit }: { user: User, onEdit: () => void }) {
+export default function Profile({ user }: { user: User }) {
 
   const handleSignOut = () => {
     supabase.auth.signOut()
@@ -24,10 +24,6 @@ export default function Profile({ user, onEdit }: { user: User, onEdit: () => vo
         <div className="flex flex-wrap justify-center gap-2">
           {user && (
             <div className="flex flex-wrap w-3/4 gap-1">
-              <Button className="w-full active:scale-95"
-              onClick={onEdit}>
-                Edit home page
-              </Button>
               <Button className="w-full active:scale-95"
                 onClick={handleSignOut}
               >
