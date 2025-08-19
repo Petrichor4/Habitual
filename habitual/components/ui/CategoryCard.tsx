@@ -58,29 +58,33 @@ export default function CategoryCard({
 
   const handleDelete = async (id: number) => {
     const { data, error } = await supabase
-    .from('categories')
-    .delete()
-    .eq('id', id)
-    .select()
+      .from("categories")
+      .delete()
+      .eq("id", id)
+      .select();
     if (error) {
-        console.error('There was an error deleting the category')
+      console.error("There was an error deleting the category");
     }
-    if ( data ) {
-        console.log('Category was deleted:', data)
+    if (data) {
+      console.log("Category was deleted:", data);
     }
-  }
+  };
 
   const OpenCat = openCategory === category.name;
 
   return (
-    <motion.div key={category.id} className="bg-gray-100 relative rounded-md z-0" style={{margin: '8px', paddingInline: '8px'}}>
+    <motion.div
+      key={category.id}
+      className="bg-gray-100 relative rounded-md z-0"
+      style={{ margin: "8px", paddingInline: "8px" }}
+    >
       <div className="absolute top-2 right-2 flex items-start gap-1 h-full -z-10 bg-gray">
         <Button
           size="sm"
           colorPalette="blue"
           h={"80%"}
-          maxH={'55px'}
-        //   onClick={() => onEdit(category.id)}
+          maxH={"55px"}
+          //   onClick={() => onEdit(category.id)}
         >
           <IoPencilOutline /> Edit
         </Button>
@@ -88,7 +92,7 @@ export default function CategoryCard({
           size="sm"
           colorPalette="red"
           h={"80%"}
-          maxH={'55px'}
+          maxH={"55px"}
           p={1}
           onClick={() => handleDelete(category.id)}
         >
@@ -99,7 +103,7 @@ export default function CategoryCard({
       <motion.div
         className="flex justify-between items-center cursor-pointer z-10 bg-gray-100 rounded-md h-16"
         drag={"x"}
-        style={{ x, padding: '8px' }}
+        style={{ x, padding: "8px" }}
         dragElastic={0.5}
         dragSnapToOrigin
         dragConstraints={{ left: -OPEN_X, right: 0 }}
@@ -108,7 +112,11 @@ export default function CategoryCard({
             info.offset.x < -OPEN_X / 2 || info.velocity.x < -200;
           setIsOpen(shouldOpen);
         }}
-        onClick={() => setOpenCategory(OpenCat ? null : category.name)}
+        onClick={() => {
+          if (Math.abs(x.get()) < 5) {
+            setOpenCategory(OpenCat ? null : category.name);
+          }
+        }}
       >
         <h2 className="font-semibold text-lg">{category.name}</h2>
         <motion.span
