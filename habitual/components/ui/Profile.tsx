@@ -23,7 +23,7 @@ export default function Profile({ user }: { user: User }) {
       <section>
         <div className="flex flex-wrap justify-center gap-2">
           {user && (
-            <div className="flex flex-wrap w-3/4 gap-1">
+            <div className="flex flex-wrap w-3/4 gap-1" style={{marginTop: '8px'}}>
               <Button className="w-full active:scale-95"
                 onClick={handleSignOut}
               >

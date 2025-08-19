@@ -23,7 +23,7 @@ export interface Pending {
 }
 
 export interface Category {
-    id: string;
+    id: number;
     name: string;
     actions?: Action[];
 }

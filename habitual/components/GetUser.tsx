@@ -15,6 +15,6 @@ export default function GetUser() {
             setUser(user)
         }
         fetchUserData()
-    })
+    },[])
     return { user }
 }

@@ -2,9 +2,11 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button, Input, NumberInput, Stack } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FormEvent, useState } from "react";
+import GetUser from "./GetUser";
 
 export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
   const [title, setTitle] = useState('');
+  const { user } = GetUser();
   const [cost, setCost] = useState<number | undefined>();
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState('');
@@ -15,7 +17,8 @@ export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
 
     const { error } = await supabase
       .from("incentives")
-      .insert([{ title, cost }]);
+      .insert([{ title, cost, user_id: user?.id }])
+      .eq('user_id', user?.id);
     if (error) {
       console.error(error);
       if (error.code === '23502') {

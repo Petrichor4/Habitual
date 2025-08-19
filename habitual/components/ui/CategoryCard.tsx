@@ -1,8 +1,22 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { IoCreateOutline } from "react-icons/io5";
+import {
+  motion,
+  AnimatePresence,
+  animate,
+  useMotionValue,
+} from "framer-motion";
+import {
+  IoCreateOutline,
+  IoPencilOutline,
+  IoTrashOutline,
+} from "react-icons/io5";
 import { Category, Action } from "@/lib/definitions";
 import ActionForm from "../ActionForm";
 import ActionCard from "./ActionCard";
+import { Button } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+
+const OPEN_X = 170;
 
 interface CategoryCardProps {
   category: Category;
@@ -29,32 +43,83 @@ export default function CategoryCard({
   onEdit,
   onDelete,
 }: CategoryCardProps) {
-  const isOpen = openCategory === category.name;
+  const [isOpen, setIsOpen] = useState(false);
+  const x = useMotionValue(0);
+
+  // Snap animation whenever isOpen changes
+  useEffect(() => {
+    animate(x, isOpen ? -OPEN_X : 0, {
+      type: "spring",
+      stiffness: 300,
+      damping: 28,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  const handleDelete = async (id: number) => {
+    const { data, error } = await supabase
+    .from('categories')
+    .delete()
+    .eq('id', id)
+    .select()
+    if (error) {
+        console.error('There was an error deleting the category')
+    }
+    if ( data ) {
+        console.log('Category was deleted:', data)
+    }
+  }
+
+  const OpenCat = openCategory === category.name;
 
   return (
-    <motion.div
-      key={category.id}
-      className="bg-gray-100 rounded-md shadow"
-      style={{ margin: "8px", padding: "4px" }}
-    >
+    <motion.div key={category.id} className="bg-gray-100 relative rounded-md z-0" style={{margin: '8px', paddingInline: '8px'}}>
+      <div className="absolute top-2 right-2 flex items-start gap-1 h-full -z-10 bg-gray">
+        <Button
+          size="sm"
+          colorPalette="blue"
+          h={"80%"}
+          maxH={'55px'}
+        //   onClick={() => onEdit(category.id)}
+        >
+          <IoPencilOutline /> Edit
+        </Button>
+        <Button
+          size="sm"
+          colorPalette="red"
+          h={"80%"}
+          maxH={'55px'}
+          p={1}
+          onClick={() => handleDelete(category.id)}
+        >
+          <IoTrashOutline /> Delete
+        </Button>
+      </div>
       {/* Category header */}
-      <div
-        className="flex justify-between items-center cursor-pointer"
-        onClick={() =>
-          setOpenCategory(isOpen ? null : category.name)
-        }
-        style={{ padding: "12px", marginBlock: "8px" }}
+      <motion.div
+        className="flex justify-between items-center cursor-pointer z-10 bg-gray-100 rounded-md h-16"
+        drag={"x"}
+        style={{ x, padding: '8px' }}
+        dragElastic={0.5}
+        dragSnapToOrigin
+        dragConstraints={{ left: -OPEN_X, right: 0 }}
+        onDragEnd={(e, info) => {
+          const shouldOpen =
+            info.offset.x < -OPEN_X / 2 || info.velocity.x < -200;
+          setIsOpen(shouldOpen);
+        }}
+        onClick={() => setOpenCategory(OpenCat ? null : category.name)}
       >
         <h2 className="font-semibold text-lg">{category.name}</h2>
         <motion.span
-          animate={{ rotate: isOpen ? 90 : 0 }}
+          animate={{ rotate: OpenCat ? 90 : 0 }}
           transition={{ duration: 0.2 }}
         >
           ▶
         </motion.span>
-      </div>
+      </motion.div>
 
-      {isOpen && (
+      {OpenCat && (
         <div
           className="w-full h-fit flex justify-end z-10"
           style={{ marginTop: 8, paddingInlineEnd: 8 }}
@@ -73,7 +138,7 @@ export default function CategoryCard({
       )}
 
       <AnimatePresence>
-        {addAction === category.name && isOpen && (
+        {addAction === category.name && OpenCat && (
           <motion.div
             initial={{ opacity: 0, y: -15, zIndex: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,7 +154,7 @@ export default function CategoryCard({
       </AnimatePresence>
 
       <AnimatePresence>
-        {isOpen && (
+        {OpenCat && (
           <div>
             {actions
               .filter((action) => action.type === category.name)
