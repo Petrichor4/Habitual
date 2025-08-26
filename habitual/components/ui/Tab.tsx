@@ -30,8 +30,8 @@ export default function Tab({points, refresh}:{points: number, refresh: () => vo
 
   return (
     <>
-      <main>
-        <section className="content flex flex-wrap justify-center w-full">
+      <main className="flex justify-center">
+        <section className="content flex flex-wrap justify-center w-full max-w-[600px]">
           <ul className="flex justify-around items-center h-10 w-4/5">
             {tabs.map((tab) => (
               <motion.li
@@ -42,7 +42,7 @@ export default function Tab({points, refresh}:{points: number, refresh: () => vo
                 {tab}
                 {tab === selectedTab ? (
                   <motion.div
-                    className="absolute -bottom-[8px] lg:-bottom-1.5 left-0 right-0 h-[3px] bg-black dark:bg-white"
+                    className="absolute -bottom-[8px] left-0 right-0 h-[3px] bg-black dark:bg-white"
                     layoutId="underline"
                   />
                 ) : null}

@@ -20,8 +20,8 @@ export default function ActionForm({
 }) {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState("");
-  const [actionTitle, setActionTitle] = useState("");
-  const [reward, setReward] = useState(0);
+  const [actionTitle, setActionTitle] = useState(action?.title ?? "");
+  const [reward, setReward] = useState(action?.reward ?? 0);
   const type = category?.name;
   const { user } = GetUser()
 
@@ -80,7 +80,7 @@ export default function ActionForm({
   };
 
   return (
-    <main className="flex justify-center items-center h-fit w-full relative">
+    <main className="flex justify-center items-center h-fit w-full">
       <AnimatePresence>
         {alert && (
           <motion.div
@@ -93,7 +93,7 @@ export default function ActionForm({
           </motion.div>
         )}
       </AnimatePresence>
-      <form onSubmit={handleAddAction} className="w-11/12 h-1/2">
+      <form onSubmit={handleAddAction} className="w-11/12 h-fit lg:w-[600px] sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2 bg-gray-100/80" style={{padding: '12px'}}>
         <Stack>
           <Input
             variant={"subtle"}
@@ -110,11 +110,12 @@ export default function ActionForm({
             />
           </NumberInput.Root>
           <div className="flex gap-1">
-            <Button className="flex-1" onClick={onCancel}>
+            <Button type="button" className="flex-1" onClick={onCancel}>
               Cancel
             </Button>
             {edit ? (
               <Button
+              type="button"
                 className="flex-1"
                 loading={loading}
                 loadingText="Submitting edit"
