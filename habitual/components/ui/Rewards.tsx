@@ -1,11 +1,16 @@
 import { Incentives } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+} from "framer-motion";
 import { useEffect, useState } from "react";
-import { IoCreateOutline } from "react-icons/io5";
+import {
+  IoCreateOutline,
+} from "react-icons/io5";
 import RewardForm from "../RewardForm";
-import RedeemButton from "./RedeemButton";
 import { User } from "@supabase/supabase-js";
+import RewardCard from "./RewardCard";
 
 export default function Rewards({
   points,
@@ -20,9 +25,8 @@ export default function Rewards({
   const [alert, setAlert] = useState("");
   const [addReward, setAddReward] = useState(false);
 
-
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const fetchUserAndIncentives = async () => {
       // Get user
       const {
@@ -32,30 +36,31 @@ export default function Rewards({
 
       if (userError) {
         console.error("Error fetching user:", userError);
-        setLoading(false)
+        setLoading(false);
         return;
       }
       if (!user) {
-        setLoading(false)
-        return
-      };
+        setLoading(false);
+        return;
+      }
 
-      setUser(user)
+      setUser(user);
 
       // Get incentives for that user
       const { data: incentivesData, error: incentivesError } = await supabase
         .from("incentives")
         .select()
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .order("cost", { ascending: true });
 
       if (incentivesError) {
         console.error("Error fetching incentives:", incentivesError);
-        setLoading(false)
+        setLoading(false);
         return;
       }
 
       if (incentivesData) setIncentives(incentivesData);
-      setLoading(false)
+      setLoading(false);
     };
     fetchUserAndIncentives();
   }, []); // runs once on mount
@@ -65,7 +70,7 @@ export default function Rewards({
     const { data, error } = await supabase
       .from("rewarded_points")
       .select("points")
-      .eq('user_id', user?.id)
+      .eq("user_id", user?.id)
       .single();
 
     if (error) {
@@ -87,7 +92,7 @@ export default function Rewards({
     const { error: updateError } = await supabase
       .from("rewarded_points")
       .update({ points: newPoints })
-      .eq('user_id', user?.id);
+      .eq("user_id", user?.id);
 
     if (updateError) {
       console.warn("There was an error updating points:", updateError);
@@ -136,31 +141,7 @@ export default function Rewards({
           style={{ marginTop: 8, marginBottom: 16 }}
         >
           {incentives.map((item) => (
-            <div
-              key={item.id}
-              className={`${
-                points >= item.cost ? "bg-gray-100" : "bg-gray-300 opacity-50"
-              } w-full h-16 rounded-sm flex justify-between items-center shadow`}
-              style={{ marginInline: 8, paddingInline: 8 }}
-            >
-              <div
-                className="flex flex-wrap"
-                style={{ fontSize: "small", color: "gray" }}
-              >
-                <h3
-                  className="w-full"
-                  style={{ fontSize: "medium", color: "black" }}
-                >
-                  {item.title}
-                </h3>
-                {item.cost}pts
-              </div>
-              <RedeemButton
-                item={item}
-                onRedeem={() => handleRedeem(item.cost)}
-                disabled={points < item.cost}
-              />
-            </div>
+            <RewardCard key={item.id} item={item} points={points} onRedeem={() => handleRedeem(item.cost)} />
           ))}
         </div>
       )}

@@ -93,7 +93,7 @@ export default function ActionForm({
           </motion.div>
         )}
       </AnimatePresence>
-      <form onSubmit={handleAddAction} className="w-11/12 h-fit lg:w-[600px] sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2 bg-gray-100/80" style={{padding: '12px'}}>
+      <form onSubmit={handleAddAction} className="w-11/12 h-fit sm:w-[600px] sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2 bg-gray-100/70" style={{padding: '12px'}}>
         <Stack>
           <Input
             variant={"subtle"}

@@ -9,13 +9,15 @@ import { Spinner, Text, VStack } from "@chakra-ui/react";
 import { supabase } from "@/lib/supabaseClient";
 import { User } from "@supabase/supabase-js";
 import LoginPage from "@/components/LoginForm";
+import AwardedPointsModal from "@/components/ui/AwardedPointsModal";
 
 export default function Home() {
   const [popout, setPopout] = useState(false);
   const [points, setPoints] = useState();
   const [user, setUser] = useState<User>();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [update, setUpdate] = useState(false);
+  const [award, setAward] = useState(true);
 
   useEffect(() => {
     const fetchPoints = async () => {
@@ -33,32 +35,35 @@ export default function Home() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true)
+      setLoading(true);
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        setLoading(false)
+        setLoading(false);
         setUser(user);
       }
-      setLoading(false)
+      setLoading(false);
     };
     fetchUser();
-  },[]);
+  }, []);
 
   if (loading && !user) {
     return (
-    <VStack className="w-full h-screen flex justify-center items-center">
-      <Spinner animationDuration={'0.8s'} />
-      <Text>Loading...</Text>
-    </VStack>
-  )
+      <VStack className="w-full h-screen flex justify-center items-center">
+        <Spinner animationDuration={"0.8s"} />
+        <Text>Loading...</Text>
+      </VStack>
+    );
   }
 
   return (
     <>
       {user ? (
-        <main>
+        <main className="relative">
+          <AnimatePresence>
+            {award && <AwardedPointsModal onClose={() => setAward(false)} />}
+          </AnimatePresence>
           <div className="h-20 w-full"></div>
           <header className="h-20 w-full flex justify-center items-center bg-gray-100/80 shadow fixed top-0 z-20">
             {user && (
@@ -76,11 +81,18 @@ export default function Home() {
               {popout && <Profile user={user!} />}
             </AnimatePresence>
           </header>
-          <Tab refresh={() => setUpdate((prev) => !prev)} points={points ?? 0} />
+          <Tab
+            refresh={() => setUpdate((prev) => !prev)}
+            points={points ?? 0}
+          />
         </main>
       ) : (
         <AnimatePresence>
-          <motion.div initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 1}}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          >
             <LoginPage />
           </motion.div>
         </AnimatePresence>

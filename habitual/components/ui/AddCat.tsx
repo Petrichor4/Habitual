@@ -48,7 +48,7 @@ export default function AddCat({ onClose }: { onClose: () => void}) {
         </motion.div>
       )}
       <Input
-        variant={"subtle"}
+        variant={"outline"}
         style={{ marginInline: "8px", marginBlock: "4px" }}
         onChange={(e) => setCategory(e.currentTarget.value)}
         placeholder="Category name"

@@ -4,7 +4,7 @@ import { IoPencilOutline, IoTrashOutline } from "react-icons/io5";
 import { Action } from "@/lib/definitions";
 import { useState, useEffect } from "react";
 
-const OPEN_X = 170;
+const OPEN_X = 110;
 
 export default function ActionRow({
   item,
@@ -35,12 +35,12 @@ export default function ActionRow({
   return (
     <div className="relative overflow-hidden w-full snap-x">
       {/* Background buttons */}
-          <div className="absolute top-0 right-2 flex items-center gap-1 h-full z-0">
-            <Button size="sm" colorPalette="blue" h={"80%"} onClick={() => onEdit(item.id)}>
-              <IoPencilOutline /> Edit
+          <div className="absolute top-0 right-1 flex items-center gap-1 h-full z-0">
+            <Button size="sm" colorPalette="blue" h={"55px"} onClick={() => onEdit(item.id)}>
+              <IoPencilOutline />
             </Button>
-            <Button size="sm" colorPalette="red" h={"80%"} p={1} onClick={() => onDelete(item.id)}>
-              <IoTrashOutline /> Delete
+            <Button size="sm" colorPalette="red" h={"55px"} w={46} p={1} onClick={() => onDelete(item.id)}>
+              <IoTrashOutline />
             </Button>
           </div>
       {/* Foreground card */}
@@ -58,6 +58,7 @@ export default function ActionRow({
       >
         <CheckboxCard.Root
           my={2}
+          colorPalette={'blue'}
           variant="surface"
           checked={checked}
           onCheckedChange={() => onToggleCheck(item.id)}

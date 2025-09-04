@@ -16,7 +16,7 @@ import { Button } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-const OPEN_X = 170;
+const OPEN_X = 110;
 
 interface CategoryCardProps {
   category: Category;
@@ -56,6 +56,10 @@ export default function CategoryCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  const handleEdit = async () => {
+    
+  }
+
   const handleDelete = async (id: number) => {
     const { data, error } = await supabase
       .from("categories")
@@ -86,17 +90,18 @@ export default function CategoryCard({
           maxH={"55px"}
           //   onClick={() => onEdit(category.id)}
         >
-          <IoPencilOutline /> Edit
+          <IoPencilOutline />
         </Button>
         <Button
           size="sm"
           colorPalette="red"
           h={"80%"}
           maxH={"55px"}
+          w={46}
           p={1}
           onClick={() => handleDelete(category.id)}
         >
-          <IoTrashOutline /> Delete
+          <IoTrashOutline />
         </Button>
       </div>
       {/* Category header */}
@@ -166,7 +171,12 @@ export default function CategoryCard({
           <div>
             {actions
               .filter((action) => action.type === category.name)
-              .sort((a, b) => a.reward - b.reward)
+              .sort((a, b) => {
+                if (a.reward === b.reward) {
+                  return a.id - b.id; // keeps stable order for same reward
+                }
+                return a.reward - b.reward;
+              })
               .map((item) => (
                 <ActionCard
                   key={item.id}

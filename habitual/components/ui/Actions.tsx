@@ -48,7 +48,7 @@ export default function Actions() {
       const { data: actionData, error: actionError } = await supabase
         .from("actions")
         .select()
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
 
       if (actionError) console.error(actionError);
       if (actionData) {

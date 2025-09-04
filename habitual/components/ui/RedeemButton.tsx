@@ -45,7 +45,7 @@ export default function RedeemButton({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-1/3 left-[10%] w-[300px] h-[160px] bg-gray-100/90 text-black z-30 rounded shadow flex flex-wrap justify-center items-center text-center gap-x-12"
+            className="fixed top-1/3 -translate-y-1/3 left-1/2 -translate-x-1/2 w-[300px] h-[160px] bg-gray-100/90 text-black z-30 rounded shadow flex flex-wrap justify-center items-center text-center gap-x-12"
           >
             Are you sure that you want to redeem {item.cost}pts for {item.title}
             ?
