@@ -34,13 +34,13 @@ export default function Calendar() {
     }
 
   return (
-    <main className="flex justify-center items-center h-screen relative">
-      <Link href="/" className="absolute top-6 left-6">
+    <main className="flex flex-wrap justify-center items-center h-screen relative">
+      <Link href="/" className="w-full" style={{paddingInline: 8, paddingBlockStart: 16}}>
         <IoMdArrowRoundBack size={40} color={hover ? 'gray' : 'black'} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} />
       </Link>
       <div className="w-full" style={{ padding: 12 }}>
         <FullCalendar
-          height={'66vh'}
+          height={'95vh'}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{right: 'dayGridMonth,timeGridWeek,timeGridDay'}}
           footerToolbar={{

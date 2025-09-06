@@ -97,31 +97,41 @@ export default function CategoryCard({
       className="bg-gray-100 relative rounded-md z-0"
       style={{ margin: "8px", paddingInline: "8px" }}
     >
-      <div className="absolute top-2 right-2 flex items-start gap-1 h-full -z-10 bg-gray">
-        <Button
-          size="sm"
-          colorPalette="blue"
-          h={"80%"}
-          maxH={"55px"}
-          onClick={() => {
-            setEdit(true);
-            setIsOpen(false);
-          }}
-        >
-          <IoPencilOutline />
-        </Button>
-        <Button
-          size="sm"
-          colorPalette="red"
-          h={"80%"}
-          maxH={"55px"}
-          w={46}
-          p={1}
-          onClick={() => handleDelete(category.id)}
-        >
-          <IoTrashOutline />
-        </Button>
-      </div>
+      {isOpen && (
+        <AnimatePresence>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ bounce: 0.5, duration: 0.2 }}
+            className="absolute top-1 right-2 flex items-center gap-2 h-[55px]"
+          >
+            <Button
+              size="sm"
+              h={'48px'}
+              colorPalette="blue"
+              className="cursor-pointer"
+              onClick={() => {
+                setEdit(true);
+                setIsOpen(false);
+              }}
+            >
+              <IoPencilOutline />
+            </Button>
+            <Button
+              size="sm"
+              h={'48px'}
+              colorPalette="red"
+              className="cursor-pointer"
+              onClick={() => {
+                handleDelete(category.id);
+                setIsOpen(false);
+              }}
+            >
+              <IoTrashOutline />
+            </Button>
+          </motion.div>
+        </AnimatePresence>
+      )}
       {/* Category header */}
       <motion.div
         className="flex justify-between items-center cursor-pointer z-10 bg-gray-100 rounded-md h-16"

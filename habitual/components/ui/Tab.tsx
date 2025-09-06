@@ -36,13 +36,13 @@ export default function Tab({points, refresh}:{points: number, refresh: () => vo
             {tabs.map((tab) => (
               <motion.li
                 key={tab}
-                className="relative cursor-pointer flex-1 text-center text-sm lg:text-xl"
+                className={`relative cursor-pointer flex-1 text-center text-sm lg:text-xl z-10`}
                 onClick={() => setSelectedTab(tab)}
               >
                 {tab}
                 {tab === selectedTab ? (
                   <motion.div
-                    className="absolute -bottom-[8px] left-0 right-0 h-[3px] bg-black dark:bg-white"
+                    className="absolute -bottom-[9px] left-0 right-0 h-[3px] bg-black dark:bg-white"
                     layoutId="underline"
                   />
                 ) : null}

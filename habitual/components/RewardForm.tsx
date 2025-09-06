@@ -56,7 +56,7 @@ export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
               <NumberInput.Control />
               <NumberInput.Input
                 onChange={(e) => setCost(Number(e.currentTarget.value))}
-                placeholder="Reward"
+                placeholder="Cost"
               />
             </NumberInput.Root>
             <div className="flex gap-1">

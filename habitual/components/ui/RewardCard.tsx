@@ -13,7 +13,7 @@ import RedeemButton from "./RedeemButton";
 import { Incentives } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
 
-const OPEN_X = 105;
+const OPEN_X = 108;
 
 export default function RewardCard({
   onRedeem,
@@ -54,6 +54,18 @@ export default function RewardCard({
     setIsOpen(false);
   };
 
+  const handleDelete = async (id: number) => {
+
+    const { error } = await supabase
+    .from('incentives')
+    .delete()
+    .eq('id', id)
+
+    if (error) {
+      console.error('there was an error deleting this reward', error)
+    }
+  }
+
   return (
     <div
       className="relative overflow-hidden w-full snap-x rounded-md"
@@ -66,7 +78,7 @@ export default function RewardCard({
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ bounce: 0.5 }}
-            className="absolute top-0 right-0 flex items-center gap-1 h-full"
+            className="absolute top-0 right-0 flex items-center gap-2 h-full"
           >
             <Button
               size="sm"
@@ -80,7 +92,11 @@ export default function RewardCard({
             >
               <IoPencilOutline />
             </Button>
-            <Button size="sm" colorPalette="red" h={"80%"} w={46} p={1}>
+            <Button size="sm" colorPalette="red" h={"80%"} w={46} p={1}
+            onClick={() => {
+                handleDelete(item.id);
+                setIsOpen(false);
+              }}>
               <IoTrashOutline />
             </Button>
           </motion.div>
