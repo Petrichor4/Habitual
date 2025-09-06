@@ -19,17 +19,13 @@ export default function Actions() {
   const [edit, setEdit] = useState<number | null>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [openCategory, setOpenCategory] = useState<string | null>(null);
-  const { changed, setChanged } = useDbChange({ table: "actions" });
+  const { changed: actionsChanged, setChanged: resetActions } = useDbChange({
+    table: "actions",
+  });
+  const { changed: categoriesChanged, setChanged: resetCategories } =
+    useDbChange({ table: "categories" });
 
   //   console.log(categories);
-
-  useEffect(() => {
-    if (changed) {
-      console.log("Something changed in actions → refresh!");
-      setChanged(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changed]);
 
   useEffect(() => {
     const getUserAndData = async () => {
@@ -48,7 +44,7 @@ export default function Actions() {
       const { data: actionData, error: actionError } = await supabase
         .from("actions")
         .select()
-        .eq("user_id", user.id)
+        .eq("user_id", user.id);
 
       if (actionError) console.error(actionError);
       if (actionData) {
@@ -69,52 +65,13 @@ export default function Actions() {
     };
 
     getUserAndData();
-  }, [changed]);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("categories-changes") // Choose a unique channel name
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "categories" }, // Listen to all events on 'your_table_name'
-        (payload) => {
-          console.log("Category change received!", payload);
-          // Update your component's state based on the payload
-          if (payload.eventType === "INSERT") {
-            setCategories((prevData) => [
-              ...prevData,
-              {
-                id: payload.new.id,
-                name: payload.new.name,
-                actions: payload.new.actions ?? [],
-              } as Category,
-            ]);
-          } else if (payload.eventType === "UPDATE") {
-            setCategories((prevData) =>
-              prevData.map((item) =>
-                item.id === payload.old.id
-                  ? ({
-                      id: payload.new.id,
-                      name: payload.new.name,
-                      actions: payload.new.actions ?? [],
-                    } as Category)
-                  : item
-              )
-            );
-          } else if (payload.eventType === "DELETE") {
-            setCategories((prevData) =>
-              prevData.filter((item) => item.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe();
-
-    // Clean up the subscription when the component unmounts
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+    if (actionsChanged || categoriesChanged) {
+      console.log("DB change detected, refreshing data...");
+      resetActions(false);
+      resetCategories(false);
+      getUserAndData(); // refetch
+    }
+  }, [actionsChanged, categoriesChanged, resetActions, resetCategories]);
 
   const handleCheckTask = async (id: number, isChecked: boolean) => {
     const { data, error } = await supabase

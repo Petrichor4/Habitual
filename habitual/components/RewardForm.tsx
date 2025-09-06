@@ -49,9 +49,9 @@ export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
           </motion.div>
         )}
       </AnimatePresence>
-        <form onSubmit={handleAddReward} className="w-11/12" style={{marginBlock: '4px'}}>
+        <form onSubmit={handleAddReward} className="w-11/12 bg-gray-100 rounded-md" style={{marginBlock: '4px', padding: 8}}>
           <Stack >
-            <Input variant={'subtle'} onChange={(e) => setTitle(e.currentTarget.value)}></Input>
+            <Input placeholder="Title" variant={'subtle'} onChange={(e) => setTitle(e.currentTarget.value)}></Input>
             <NumberInput.Root variant={'subtle'}>
               <NumberInput.Control />
               <NumberInput.Input

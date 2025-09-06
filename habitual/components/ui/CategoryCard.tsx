@@ -5,6 +5,7 @@ import {
   useMotionValue,
 } from "framer-motion";
 import {
+  IoClose,
   IoCreateOutline,
   IoPencilOutline,
   IoTrashOutline,
@@ -12,9 +13,10 @@ import {
 import { Category, Action } from "@/lib/definitions";
 import ActionForm from "../ActionForm";
 import ActionCard from "./ActionCard";
-import { Button } from "@chakra-ui/react";
+import { Button, Input } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { FaCheck } from "react-icons/fa6";
 
 const OPEN_X = 110;
 
@@ -44,6 +46,8 @@ export default function CategoryCard({
   onDelete,
 }: CategoryCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const [catName, setCatName] = useState(category.name || "");
   const x = useMotionValue(0);
 
   // Snap animation whenever isOpen changes
@@ -56,9 +60,20 @@ export default function CategoryCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const handleEdit = async () => {
-    
-  }
+  const handleEdit = async (id: number) => {
+    const { error } = await supabase
+      .from("categories")
+      .update({ name: catName })
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      console.error("Error editing category:", error);
+      return;
+    }
+
+    setEdit(false);
+  };
 
   const handleDelete = async (id: number) => {
     const { data, error } = await supabase
@@ -88,7 +103,10 @@ export default function CategoryCard({
           colorPalette="blue"
           h={"80%"}
           maxH={"55px"}
-          //   onClick={() => onEdit(category.id)}
+          onClick={() => {
+            setEdit(true);
+            setIsOpen(false);
+          }}
         >
           <IoPencilOutline />
         </Button>
@@ -123,7 +141,33 @@ export default function CategoryCard({
           }
         }}
       >
-        <h2 className="font-semibold text-lg">{category.name}</h2>
+        {edit ? (
+          <div className="flex flex-nowrap gap-2">
+            <Input
+              onClickCapture={(e) => e.stopPropagation()}
+              value={catName}
+              onChange={(e) => setCatName(e.currentTarget.value)}
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit(category.id);
+              }}
+            >
+              <FaCheck size={20} color="green" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setEdit(false);
+              }}
+            >
+              <IoClose size={25} color="red" />
+            </button>
+          </div>
+        ) : (
+          <h2 className="font-semibold text-lg">{category.name}</h2>
+        )}
         <motion.span
           animate={{ rotate: OpenCat ? 90 : 0 }}
           transition={{ duration: 0.2 }}
@@ -170,7 +214,7 @@ export default function CategoryCard({
         {OpenCat && (
           <div>
             {actions
-              .filter((action) => action.type === category.name)
+              .filter((action) => action.category_id === category.id)
               .sort((a, b) => {
                 if (a.reward === b.reward) {
                   return a.id - b.id; // keeps stable order for same reward

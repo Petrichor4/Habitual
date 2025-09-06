@@ -35,7 +35,7 @@ export default function AddCat({ onClose }: { onClose: () => void}) {
       initial={{ opacity: 0, y: -15, zIndex: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15, zIndex: -10 }}
-      className="flex flex-wrap justify-center"
+      className="flex flex-wrap justify-center bg-gray-100 rounded-md gap-2" style={{margin: 6, padding: 10}}
     >
       {alert && (
         <motion.div
@@ -48,12 +48,11 @@ export default function AddCat({ onClose }: { onClose: () => void}) {
         </motion.div>
       )}
       <Input
-        variant={"outline"}
-        style={{ marginInline: "8px", marginBlock: "4px" }}
+        variant={"subtle"}
         onChange={(e) => setCategory(e.currentTarget.value)}
         placeholder="Category name"
       />
-      <div className="flex gap-1 w-full" style={{ marginInline: "8px" }}>
+      <div className="flex gap-2 w-full">
         <Button onClick={onClose} className="flex-1 active:scale-95">
           Cancel
         </Button>

@@ -4,13 +4,13 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Profile({ user }: { user: User }) {
-
   const handleSignOut = () => {
-    supabase.auth.signOut()
-    window.location.assign('/')
-  }
+    supabase.auth.signOut();
+    window.location.assign("/");
+  };
 
   return (
     <motion.div
@@ -23,12 +23,19 @@ export default function Profile({ user }: { user: User }) {
       <section>
         <div className="flex flex-wrap justify-center gap-2">
           {user && (
-            <div className="flex flex-wrap w-3/4 gap-1" style={{marginTop: '8px'}}>
-              <Button className="w-full active:scale-95"
+            <div
+              className="flex flex-wrap w-3/4 gap-1"
+              style={{ marginTop: "8px" }}
+            >
+              <Button
+                className="w-full active:scale-95"
                 onClick={handleSignOut}
               >
                 Sign Out
               </Button>
+              <Link href={'/schedule'} className="w-full active:scale-95">
+                <Button className="w-full">Calendar</Button>
+              </Link>
             </div>
           )}
         </div>

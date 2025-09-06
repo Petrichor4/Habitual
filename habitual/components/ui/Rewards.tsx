@@ -1,16 +1,12 @@
 import { Incentives } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
-import {
-  AnimatePresence,
-  motion,
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-  IoCreateOutline,
-} from "react-icons/io5";
+import { IoCreateOutline } from "react-icons/io5";
 import RewardForm from "../RewardForm";
 import { User } from "@supabase/supabase-js";
 import RewardCard from "./RewardCard";
+import useDbChange from "../DbChange";
 
 export default function Rewards({
   points,
@@ -19,6 +15,8 @@ export default function Rewards({
   points: number;
   refresh: () => void;
 }) {
+  const { changed: incentivesChanged, setChanged: resetIncentives } =
+    useDbChange({ table: "incentives" });
   const [incentives, setIncentives] = useState<Incentives[]>([]);
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(false);
@@ -62,8 +60,14 @@ export default function Rewards({
       if (incentivesData) setIncentives(incentivesData);
       setLoading(false);
     };
+
     fetchUserAndIncentives();
-  }, []); // runs once on mount
+    if (incentivesChanged) {
+      console.log("DB change detected, refreshing data...");
+      resetIncentives(false);
+      fetchUserAndIncentives();
+    }
+  }, [incentivesChanged, resetIncentives]);
 
   const handleRedeem = async (pointsToRedeem: number) => {
     // fetch current points (assuming single row)
@@ -141,7 +145,12 @@ export default function Rewards({
           style={{ marginTop: 8, marginBottom: 16 }}
         >
           {incentives.map((item) => (
-            <RewardCard key={item.id} item={item} points={points} onRedeem={() => handleRedeem(item.cost)} />
+            <RewardCard
+              key={item.id}
+              item={item}
+              points={points}
+              onRedeem={() => handleRedeem(item.cost)}
+            />
           ))}
         </div>
       )}

@@ -36,7 +36,7 @@ export default function ActionRow({
     <div className="relative overflow-hidden w-full snap-x">
       {/* Background buttons */}
           <div className="absolute top-0 right-1 flex items-center gap-1 h-full z-0">
-            <Button size="sm" colorPalette="blue" h={"55px"} onClick={() => onEdit(item.id)}>
+            <Button size="sm" colorPalette="blue" h={"55px"} onClick={() => {onEdit(item.id); setIsOpen(false)}}>
               <IoPencilOutline />
             </Button>
             <Button size="sm" colorPalette="red" h={"55px"} w={46} p={1} onClick={() => onDelete(item.id)}>

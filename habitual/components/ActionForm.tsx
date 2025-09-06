@@ -76,7 +76,7 @@ export default function ActionForm({
       .eq("id", action?.id);
     if (error) return console.warn(error);
     if (onCancel) onCancel();
-    window.location.assign("/");
+    // window.location.assign("/");
   };
 
   return (
@@ -93,7 +93,7 @@ export default function ActionForm({
           </motion.div>
         )}
       </AnimatePresence>
-      <form onSubmit={handleAddAction} className="w-11/12 h-fit sm:w-[600px] sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2 bg-gray-100/70" style={{padding: '12px'}}>
+      <form onSubmit={handleAddAction} className="w-full h-fit sm:w-[600px] sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2 bg-gray-100/70" style={{padding: '8px'}}>
         <Stack>
           <Input
             variant={"subtle"}
@@ -109,7 +109,7 @@ export default function ActionForm({
               defaultValue={action?.reward}
             />
           </NumberInput.Root>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <Button type="button" className="flex-1" onClick={onCancel}>
               Cancel
             </Button>

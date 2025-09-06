@@ -8,7 +8,7 @@ export interface Incentives {
 export interface Action {
     id: number;
     userId: string;
-    type: string;
+    category_id: number;
     title: string;
     reward: number;
     done: boolean;
