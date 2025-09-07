@@ -91,7 +91,6 @@ export default function ActionRow({
         className="relative z-10 bg-white rounded snap-center"
       >
         <CheckboxCard.Root
-          my={2}
           colorPalette={"blue"}
           variant="surface"
           checked={checked}

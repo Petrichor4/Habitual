@@ -8,3 +8,7 @@
 Input {
   background-color: white;
 }
+
+.login-page >* Input {
+  background-color: #f4f4f5;
+}

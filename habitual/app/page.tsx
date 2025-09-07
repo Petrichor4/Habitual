@@ -13,11 +13,12 @@ import AwardedPointsModal from "@/components/ui/AwardedPointsModal";
 
 export default function Home() {
   const [popout, setPopout] = useState(false);
-  const [points, setPoints] = useState();
+  const [points, setPoints] = useState<number>();
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(false);
   const [update, setUpdate] = useState(false);
-  const [award, setAward] = useState(true);
+  const [award, setAward] = useState(false);
+  const [gainedPoints, setGainedPoints] = useState<number>(0);
 
   useEffect(() => {
     const fetchPoints = async () => {
@@ -34,6 +35,19 @@ export default function Home() {
   }, [update]);
 
   useEffect(() => {
+    if (points === undefined) return;
+
+    const prev = Number(localStorage.getItem("prevPoints")) || 0;
+
+    if (points > prev) {
+      setGainedPoints(points - prev);
+      setAward(true);
+    }
+
+    localStorage.setItem("prevPoints", points.toString());
+  }, [points]);
+
+  useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
       const {
@@ -47,6 +61,37 @@ export default function Home() {
     };
     fetchUser();
   }, []);
+
+  // const addPoints = async () => {
+  //   const { data, error: getError } = await supabase
+  //     .from("rewarded_points")
+  //     .select("points")
+  //     .eq("user_id", "fa3ba1cc-23d8-401f-8ae4-7808bd7ec21c")
+  //     .single();
+
+  //   if (getError) {
+  //     console.error(getError);
+  //     return;
+  //   }
+
+  //   const currentNumber = data.points;
+
+  //   const newNumber = currentNumber + 10
+    
+  //   console.log(newNumber)
+
+  //   const { data: updateRes, error } = await supabase
+  //     .from("rewarded_points")
+  //     .update("points", newNumber)
+  //     .eq("user_id", "fa3ba1cc-23d8-401f-8ae4-7808bd7ec21c")
+  //     .select();
+
+  //     if (error) {
+  //       console.error(error)
+  //       return
+  //     }
+  //     console.log(updateRes)
+  // };
 
   if (loading && !user) {
     return (
@@ -62,7 +107,12 @@ export default function Home() {
       {user ? (
         <main className="relative">
           <AnimatePresence>
-            {award && <AwardedPointsModal onClose={() => setAward(false)} />}
+            {award && (
+              <AwardedPointsModal
+                points={gainedPoints}
+                onClose={() => setAward(false)}
+              />
+            )}
           </AnimatePresence>
           <div className="h-20 w-full"></div>
           <header className="h-20 w-full flex justify-center items-center bg-gray-100/80 shadow fixed top-0 z-20">
@@ -72,6 +122,7 @@ export default function Home() {
             <h1 className="text-3xl h-fit" style={{ fontSize: 30 }}>
               Habitual
             </h1>
+            {/* <button onClick={addPoints}>add points</button> */}
             <HiOutlineMenuAlt4
               className="absolute right-8"
               size={20}

@@ -29,12 +29,13 @@ export default function LoginPage() {
     const passwordConfirm = formData.get("confirm-password")?.toString().trim();
 
     if (!email || !password) {
+      setLoading(false)
       return;
     }
 
     if (password !== passwordConfirm) {
       setAlert("Passwords do not match");
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
@@ -61,6 +62,7 @@ export default function LoginPage() {
     const password = formData.get("password")?.toString().trim();
 
     if (!email || !password) {
+      setLoading(false)
       return;
     }
 
@@ -71,19 +73,21 @@ export default function LoginPage() {
 
     if (error) {
       console.warn("There was an error logging in:", error);
-      setLoading(false)
+      setLoading(false);
       return;
     }
     setLoading(false);
-    window.location.assign('/')
+    window.location.assign("/");
   };
 
   return (
-    <main className="flex flex-wrap justify-center items-center h-screen">
+    <main className="flex flex-wrap justify-center items-center h-screen login-page">
       <div className="w-4/5 flex flex-wrap justify-center gap-12">
         <div className="text-center">
           <h1>Welcome to Habitual</h1>
-          <Text className="">Create an account or log in to start your motivation journey.</Text>
+          <Text className="">
+            Create an account or log in to start your motivation journey.
+          </Text>
         </div>
         {signUp ? (
           <form onSubmit={handleSignUp} className="w-4/5 h-fit">
@@ -101,9 +105,6 @@ export default function LoginPage() {
                 placeholder="Confirm Password"
               />
               <div className="flex justify-end gap-2">
-                <Button variant={"subtle"} className="flex-1">
-                  Cancel
-                </Button>
                 <Button
                   variant={"subtle"}
                   loading={loading}
@@ -119,6 +120,7 @@ export default function LoginPage() {
                 Have an account?
                 <a
                   className="hover:cursor-pointer"
+                  style={{ textDecorationLine: "underline" }}
                   onClick={() => setSignUp(false)}
                 >
                   {" "}
@@ -138,9 +140,6 @@ export default function LoginPage() {
                 placeholder="Password"
               />
               <div className="flex justify-end gap-2">
-                <Button variant={"subtle"} className="flex-1">
-                  Cancel
-                </Button>
                 <Button
                   variant={"subtle"}
                   loading={loading}
@@ -156,6 +155,7 @@ export default function LoginPage() {
                 Dont have an account?
                 <a
                   className="hover:cursor-pointer"
+                  style={{ textDecorationLine: "underline" }}
                   onClick={() => setSignUp(true)}
                 >
                   {" "}

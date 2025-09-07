@@ -27,15 +27,15 @@ export default function Profile({ user }: { user: User }) {
               className="flex flex-wrap w-3/4 gap-1"
               style={{ marginTop: "8px" }}
             >
+              <Link href={'/schedule'} className="w-full active:scale-95">
+                <Button className="w-full">Calendar</Button>
+              </Link>
               <Button
                 className="w-full active:scale-95"
                 onClick={handleSignOut}
               >
                 Sign Out
               </Button>
-              <Link href={'/schedule'} className="w-full active:scale-95">
-                <Button className="w-full">Calendar</Button>
-              </Link>
             </div>
           )}
         </div>

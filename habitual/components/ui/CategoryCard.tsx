@@ -222,7 +222,7 @@ export default function CategoryCard({
 
       <AnimatePresence>
         {OpenCat && (
-          <div>
+          <div className="flex flex-wrap gap-y-2" style={{paddingBlock: 8}}>
             {actions
               .filter((action) => action.category_id === category.id)
               .sort((a, b) => {
