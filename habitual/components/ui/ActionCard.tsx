@@ -4,10 +4,11 @@ import {
   animate,
   AnimatePresence,
 } from "framer-motion";
-import { Button, CheckboxCard } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { IoPencilOutline, IoTrashOutline } from "react-icons/io5";
 import { Action } from "@/lib/definitions";
 import { useState, useEffect } from "react";
+import { IoIosCheckmarkCircle, IoIosRadioButtonOff } from "react-icons/io";
 
 const OPEN_X = 108;
 
@@ -38,7 +39,10 @@ export default function ActionRow({
   }, [isOpen]);
 
   return (
-    <div className="relative overflow-hidden w-full snap-x">
+    <div
+      className="relative overflow-hidden w-full snap-x"
+      style={{ paddingBlock: "4px", paddingInline: 2 }}
+    >
       {/* Background buttons */}
       {isOpen && (
         <AnimatePresence>
@@ -88,25 +92,41 @@ export default function ActionRow({
             info.offset.x < -OPEN_X / 2 || info.velocity.x < -200;
           setIsOpen(shouldOpen);
         }}
-        className="relative z-10 bg-white rounded snap-center"
+        className="relative z-10 bg-white rounded-full snap-center shadow"
       >
-        <CheckboxCard.Root
-          colorPalette={"blue"}
-          variant="surface"
-          checked={checked}
-          onCheckedChange={() => onToggleCheck(item.id)}
+        <div
+          className="flex flex-wrap justify-between"
+          style={{ padding: 8, paddingInlineStart: 24 }}
         >
-          <CheckboxCard.HiddenInput />
-          <CheckboxCard.Control>
-            <CheckboxCard.Content>
-              <CheckboxCard.Label>{item.title}</CheckboxCard.Label>
-              <CheckboxCard.Description>
-                {item.reward}pts
-              </CheckboxCard.Description>
-            </CheckboxCard.Content>
-            <CheckboxCard.Indicator />
-          </CheckboxCard.Control>
-        </CheckboxCard.Root>
+          <div>
+            <h4>{item.title}</h4>
+            <p>{item.reward}</p>
+          </div>
+          {checked ? (
+            <AnimatePresence>
+              <motion.span
+                initial={{ scale: 0, rotate: 90 }}
+                animate={{ scale: 1, rotate: 0 }}
+                exit={{ scale: 0 }}
+                transition={{ bounce: 0.5, duration: 0.3 }}
+                style={{ display: "inline-block" }}
+              >
+                <IoIosCheckmarkCircle
+                  onClick={() => onToggleCheck(item.id)}
+                  color="green"
+                  size={32}
+                  style={{ marginTop: 8, marginInlineEnd: 8, cursor: "pointer" }}
+                />
+              </motion.span>
+            </AnimatePresence>
+          ) : (
+            <IoIosRadioButtonOff
+              onClick={() => onToggleCheck(item.id)}
+              size={32}
+              style={{ marginTop: 8, marginInlineEnd: 8, cursor: "pointer" }}
+            />
+          )}
+        </div>
       </motion.div>
     </div>
   );

@@ -33,7 +33,7 @@ export default function AwardedPointsModal({
         </button>
       </div>
       <Text
-        className="flex h-3/5 items-center"
+        className="flex h-3/5 items-center justify-center"
         style={{ fontSize: "24px", textAlign: "center" }}
       >
         Congratulations you have earned {points} points! Keep up the good work!

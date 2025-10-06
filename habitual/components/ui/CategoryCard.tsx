@@ -94,7 +94,10 @@ export default function CategoryCard({
   return (
     <motion.div
       key={category.id}
-      className="bg-gray-100 relative rounded-md z-0"
+      layout
+      className={`relative ${
+        OpenCat ? "rounded-[40px]" : "rounded-full"
+      } shadow-sm z-0`}
       style={{ margin: "8px", paddingInline: "8px" }}
     >
       {isOpen && (
@@ -107,7 +110,7 @@ export default function CategoryCard({
           >
             <Button
               size="sm"
-              h={'48px'}
+              h={"48px"}
               colorPalette="blue"
               className="cursor-pointer"
               onClick={() => {
@@ -119,7 +122,7 @@ export default function CategoryCard({
             </Button>
             <Button
               size="sm"
-              h={'48px'}
+              h={"48px"}
               colorPalette="red"
               className="cursor-pointer"
               onClick={() => {
@@ -134,7 +137,7 @@ export default function CategoryCard({
       )}
       {/* Category header */}
       <motion.div
-        className="flex justify-between items-center cursor-pointer z-10 bg-gray-100 rounded-md h-16"
+        className="flex justify-between items-center cursor-pointer z-10 rounded-md h-16"
         drag={"x"}
         style={{ x, padding: "8px" }}
         dragElastic={0.5}
@@ -178,31 +181,31 @@ export default function CategoryCard({
         ) : (
           <h2 className="font-semibold text-lg">{category.name}</h2>
         )}
-        <motion.span
-          animate={{ rotate: OpenCat ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          ▶
-        </motion.span>
       </motion.div>
 
-      {OpenCat && (
-        <div
-          className="w-full h-fit flex justify-end z-10"
-          style={{ marginTop: 8, paddingInlineEnd: 8 }}
-        >
-          <button
-            onClick={() =>
-              setAddAction(addAction === category.name ? null : category.name)
-            }
-            style={{ paddingInline: 6, fontSize: "small" }}
-            className="flex items-center gap-1"
+      <AnimatePresence>
+        {OpenCat && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full h-fit flex justify-end z-10"
+            style={{ marginTop: 8, paddingInlineEnd: 8, overflow: "hidden" }}
           >
-            <IoCreateOutline />
-            Add action
-          </button>
-        </div>
-      )}
+            <button
+              onClick={() =>
+                setAddAction(addAction === category.name ? null : category.name)
+              }
+              style={{ paddingInline: 6, fontSize: "small" }}
+              className="flex items-center gap-1"
+            >
+              <IoCreateOutline />
+              Add action
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {addAction === category.name && OpenCat && (
@@ -219,10 +222,16 @@ export default function CategoryCard({
           </motion.div>
         )}
       </AnimatePresence>
-
       <AnimatePresence>
         {OpenCat && (
-          <div className="flex flex-wrap gap-y-2" style={{paddingBlock: 8}}>
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-wrap"
+            style={{ paddingBlock: 8 }}
+          >
             {actions
               .filter((action) => action.category_id === category.id)
               .sort((a, b) => {
@@ -241,7 +250,7 @@ export default function CategoryCard({
                   onDelete={onDelete}
                 />
               ))}
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
