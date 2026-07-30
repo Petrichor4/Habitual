@@ -62,36 +62,6 @@ export default function Home() {
     fetchUser();
   }, []);
 
-  // const addPoints = async () => {
-  //   const { data, error: getError } = await supabase
-  //     .from("rewarded_points")
-  //     .select("points")
-  //     .eq("user_id", "fa3ba1cc-23d8-401f-8ae4-7808bd7ec21c")
-  //     .single();
-
-  //   if (getError) {
-  //     console.error(getError);
-  //     return;
-  //   }
-
-  //   const currentNumber = data.points;
-
-  //   const newNumber = currentNumber + 10
-    
-  //   console.log(newNumber)
-
-  //   const { data: updateRes, error } = await supabase
-  //     .from("rewarded_points")
-  //     .update("points", newNumber)
-  //     .eq("user_id", "fa3ba1cc-23d8-401f-8ae4-7808bd7ec21c")
-  //     .select();
-
-  //     if (error) {
-  //       console.error(error)
-  //       return
-  //     }
-  //     console.log(updateRes)
-  // };
 
   if (loading && !user) {
     return (

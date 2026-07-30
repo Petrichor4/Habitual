@@ -104,7 +104,7 @@ export default function RewardCard({
       )}
       <motion.div
         drag="x"
-        style={{ x, paddingInline: "8px" }}
+        style={{ x, paddingInline: "4px", margin: 4 }}
         dragElastic={0.5}
         dragSnapToOrigin
         dragConstraints={{ left: -OPEN_X, right: 0 }}
@@ -115,7 +115,7 @@ export default function RewardCard({
         }}
         className={`${
           points >= item.cost ? "bg-gray-100" : "bg-gray-300 opacity-50"
-        } w-full ${edit ? 'h-40' : 'h-16'} rounded-sm flex justify-between items-center shadow z-10`}
+        } w-full ${edit ? 'h-40' : 'h-16'} rounded-full flex justify-between items-center shadow z-10`}
       >
         {edit ? (
           <div

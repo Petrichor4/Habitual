@@ -22,8 +22,8 @@ export default function ActionForm({
   const [alert, setAlert] = useState("");
   const [actionTitle, setActionTitle] = useState(action?.title ?? "");
   const [reward, setReward] = useState(action?.reward ?? 0);
-  const type = category?.name;
-  const { user } = GetUser()
+  const categoryId = category?.id;
+  const { user } = GetUser();
 
   const handleAddAction = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,49 +34,37 @@ export default function ActionForm({
       setTimeout(() => {
         setAlert("");
       }, 3000);
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
     // Step 1: Create the action
-    const { data: newAction, error: actionError } = await supabase
+    const { data: newAction } = await supabase
       .from("actions")
-      .insert([{ user_id: user?.id, type, title: actionTitle, reward }])
+      .insert([{ user_id: user?.id, category_id: categoryId, title: actionTitle, reward }])
       .select()
       .single();
+    console.log(newAction);
+    if (Error) {
+      console.error(Error);
+      setLoading(false);
+    }
 
-    if (actionError) {
-      console.error(actionError)
-      setLoading(false)
-    };
+    console.log(newAction);
 
-    console.log(newAction)
-
-    // Step 2: Link the action to the category
-    // const { error: linkError } = await supabase
-    //   .from("category_actions")
-    //   .insert([{ category_id: category?.id, action_id: newAction.id }]);
-
-    // if (linkError) {
-    //   console.error(linkError)
-    //   setLoading(false)
-    // };
-
-    // console.log("Action linked to category!");
-    setLoading(false)
+    setLoading(false);
     if (onCancel) {
-      onCancel()
+      onCancel();
     }
   };
 
   const handleEdit = async () => {
     const { error } = await supabase
       .from("actions")
-      .update({ type, title: actionTitle, reward })
+      .update({ categoryId, title: actionTitle, reward })
       .eq("id", action?.id);
     if (error) return console.warn(error);
     if (onCancel) onCancel();
-    // window.location.assign("/");
   };
 
   return (
@@ -93,7 +81,11 @@ export default function ActionForm({
           </motion.div>
         )}
       </AnimatePresence>
-      <form onSubmit={handleAddAction} className="w-full h-fit sm:w-[600px] sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2 bg-gray-100/70" style={{padding: '8px'}}>
+      <form
+        onSubmit={handleAddAction}
+        className={`w-full h-fit sm:w-[600px] sm:[position-inherit] ${edit && "sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2"} bg-gray-100/70`}
+        style={{ padding: "8px" }}
+      >
         <Stack>
           <Input
             variant={"subtle"}
@@ -115,7 +107,7 @@ export default function ActionForm({
             </Button>
             {edit ? (
               <Button
-              type="button"
+                type="button"
                 className="flex-1"
                 loading={loading}
                 loadingText="Submitting edit"

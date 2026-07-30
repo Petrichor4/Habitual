@@ -183,13 +183,13 @@ export default function CategoryCard({
         )}
       </motion.div>
 
-      <AnimatePresence>
+      <AnimatePresence mode={'popLayout'}>
         {OpenCat && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
             className="w-full h-fit flex justify-end z-10"
             style={{ marginTop: 8, paddingInlineEnd: 8, overflow: "hidden" }}
           >
@@ -207,7 +207,7 @@ export default function CategoryCard({
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {addAction === category.name && OpenCat && (
           <motion.div
             initial={{ opacity: 0, y: -15, zIndex: -10 }}

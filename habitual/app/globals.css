@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 .action-button {
-    color: green;
+    background-color: green;
+    color: white;
     font-size: medium;
+    padding-inline: 12px;
 }
 
 Input {

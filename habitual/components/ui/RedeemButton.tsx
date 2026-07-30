@@ -18,7 +18,7 @@ export default function RedeemButton({
 
   return (
     <button
-      className="action-button relative hover:cursor-pointer"
+      className="action-button relative hover:cursor-pointer rounded-full"
       onTouchStart={() => setTap(true)}
       onTouchEnd={() => setTap(false)}
       onClick={(e) => {
@@ -28,7 +28,7 @@ export default function RedeemButton({
       disabled={disabled}
     >
       Redeem
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {tap && (
           <motion.div
             initial={{ scale: 0.8, opacity: 0.5 }}
@@ -38,7 +38,7 @@ export default function RedeemButton({
             className="absolute bg-gray-400/70 size-13 -bottom-[60%] left-[7%] rounded-full"
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
       <AnimatePresence>
         {confirmRedemption && (
           <motion.div
