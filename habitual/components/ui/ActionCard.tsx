@@ -12,7 +12,7 @@ import { IoIosCheckmarkCircle, IoIosRadioButtonOff } from "react-icons/io";
 
 const OPEN_X = 108;
 
-export default function ActionRow({
+export default function ActionCard({
   item,
   checked,
   onToggleCheck,

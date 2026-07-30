@@ -97,8 +97,13 @@ export default function Actions() {
   };
 
   const handleDelete = async (id: number) => {
-    const { error } = await supabase.from("actions").delete().eq("id", id);
-    if (error) return console.warn(error);
+    const { data, error } = await supabase
+      .from("actions")
+      .delete()
+      .eq("id", id)
+      .select();
+    if (error) console.error(error);
+    if (data) console.log("deleted action:", data);
     setActions((prev) => prev.filter((a) => a.id !== id));
   };
 

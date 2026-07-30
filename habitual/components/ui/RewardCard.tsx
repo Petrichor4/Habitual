@@ -68,7 +68,7 @@ export default function RewardCard({
 
   return (
     <div
-      className="relative overflow-hidden w-full snap-x rounded-md"
+      className="relative w-full snap-x rounded-md"
       style={{ marginInline: "8px" }}
     >
       {/* Background buttons */}
@@ -148,7 +148,7 @@ export default function RewardCard({
           >
             <div
               className="flex flex-wrap"
-              style={{ fontSize: "small", color: "gray" }}
+              style={{ fontSize: "small", color: "gray" , paddingInline: '16px'}}
             >
               <h3
                 className="w-full"
