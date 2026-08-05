@@ -83,17 +83,17 @@ export default function ActionForm({
       </AnimatePresence>
       <form
         onSubmit={handleAddAction}
-        className={`w-full h-fit sm:w-[600px] sm:[position-inherit] ${edit && "sm:fixed sm:top-24 sm:left-1/2 sm:-translate-x-1/2"} bg-gray-100/70`}
+        className={`w-full h-fit sm:w-[600px] sm:[position-inherit] bg-[#17171b] `}
         style={{ padding: "8px" }}
       >
         <Stack>
           <Input
-            variant={"subtle"}
+            variant={"flushed"}
             onChange={(e) => setActionTitle(e.currentTarget.value)}
             placeholder="Action"
             defaultValue={action?.title}
           />
-          <NumberInput.Root step={5} variant={"subtle"}>
+          <NumberInput.Root step={5} variant={"flushed"}>
             <NumberInput.Control />
             <NumberInput.Input
               onChange={(e) => setReward(Number(e.currentTarget.value))}

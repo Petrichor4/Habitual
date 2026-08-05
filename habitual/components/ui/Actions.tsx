@@ -1,9 +1,10 @@
 import { Action, Category } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User } from "@supabase/supabase-js";
 import { IoCreateOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
+import { Reorder } from "framer-motion";
 import ActionForm from "../ActionForm";
 import AddCat from "./AddCat";
 import useDbChange from "../DbChange";
@@ -24,8 +25,7 @@ export default function Actions() {
   });
   const { changed: categoriesChanged, setChanged: resetCategories } =
     useDbChange({ table: "categories" });
-
-  //   console.log(categories);
+  const container = useRef(null)
 
   useEffect(() => {
     const getUserAndData = async () => {
@@ -57,7 +57,8 @@ export default function Actions() {
       const { data: catData, error: catError } = await supabase
         .from("categories")
         .select()
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .order('list_order');
 
       if (catError) console.error(catError);
       if (catData) setCategories(catData);
@@ -72,6 +73,23 @@ export default function Actions() {
       getUserAndData(); // refetch
     }
   }, [actionsChanged, categoriesChanged, resetActions, resetCategories]);
+
+    const updateCategoryOrder = async () => {
+      if (categories.length === 0) return;
+
+      try {
+        await Promise.all(
+          categories.map((category, index) =>
+            supabase
+              .from("categories")
+              .update({ list_order: index })
+              .eq("id", category.id)
+          )
+        );
+      } catch (error) {
+        console.error("failed to update category order", error);
+      }
+    };
 
   const handleCheckTask = async (id: number, isChecked: boolean) => {
     const { data, error } = await supabase
@@ -144,23 +162,25 @@ export default function Actions() {
           <h4>Add a category to begin</h4>
         </div>
       ) : (
-        <div>
+        <Reorder.Group axis="y" values={categories} onReorder={setCategories} ref={container}>
           {categories.map((cat) => (
-            <CategoryCard
-              key={cat.id}
-              category={cat}
-              actions={actions}
-              openCategory={openCategory}
-              setOpenCategory={setOpenCategory}
-              addAction={addAction}
-              setAddAction={setAddAction}
-              checkedMap={checkedMap}
-              toggleCheck={toggleCheck}
-              onEdit={(id) => setEdit(id)}
-              onDelete={handleDelete}
-            />
+              <CategoryCard
+                key={cat.id}
+                container={container}
+                category={cat}
+                actions={actions}
+                openCategory={openCategory}
+                setOpenCategory={setOpenCategory}
+                addAction={addAction}
+                setAddAction={setAddAction}
+                checkedMap={checkedMap}
+                toggleCheck={toggleCheck}
+                onEdit={(id) => setEdit(id)}
+                onDelete={handleDelete}
+                update={updateCategoryOrder}
+              />
           ))}
-        </div>
+        </Reorder.Group>
       )}
     </div>
   );

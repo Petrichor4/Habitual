@@ -7,10 +7,10 @@
     padding-inline: 12px;
 }
 
-Input {
-  background-color: white;
+#category-card {
+  touch-action: none;
 }
 
 .login-page >* Input {
-  background-color: #f4f4f5;
+  color: black;
 }

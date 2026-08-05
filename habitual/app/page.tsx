@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { HiOutlineMenuAlt4 } from "react-icons/hi";
 import { AnimatePresence, motion } from "framer-motion";
 import Profile from "@/components/ui/Profile";
 import Tab from "@/components/ui/Tab";
-import { Spinner, Text, VStack } from "@chakra-ui/react";
+import { Heading, Spinner, Text, VStack } from "@chakra-ui/react";
 import { supabase } from "@/lib/supabaseClient";
 import { User } from "@supabase/supabase-js";
 import LoginPage from "@/components/LoginForm";
 import AwardedPointsModal from "@/components/ui/AwardedPointsModal";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 export default function Home() {
   const [popout, setPopout] = useState(false);
@@ -75,7 +75,7 @@ export default function Home() {
   return (
     <>
       {user ? (
-        <main className="relative">
+        <main className="relative dark:bg-gray-600">
           <AnimatePresence>
             {award && (
               <AwardedPointsModal
@@ -85,15 +85,14 @@ export default function Home() {
             )}
           </AnimatePresence>
           <div className="h-20 w-full"></div>
-          <header className="h-20 w-full flex justify-center items-center bg-gray-100/80 shadow fixed top-0 z-20">
+          <header className="h-20 w-full flex justify-center items-center fixed top-0 z-20">
             {user && (
               <Text className="absolute left-10">{points ?? 0} Pts</Text>
             )}
-            <h1 className="text-3xl h-fit" style={{ fontSize: 30 }}>
+            <Heading as={'h1'} className="text-3xl h-fit relative w-[50%] text-center" style={{ fontSize: 30 }}>
               Habitual
-            </h1>
-            {/* <button onClick={addPoints}>add points</button> */}
-            <HiOutlineMenuAlt4
+            </Heading>
+            <RxHamburgerMenu
               className="absolute right-8"
               size={20}
               onClick={() => setPopout((prev) => !prev)}

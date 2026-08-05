@@ -35,7 +35,7 @@ export default function AddCat({ onClose }: { onClose: () => void}) {
       initial={{ opacity: 0, y: -15, zIndex: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15, zIndex: -10 }}
-      className="flex flex-wrap justify-center bg-gray-100 rounded-md gap-2" style={{margin: 6, padding: 10}}
+      className="flex flex-wrap justify-center rounded-md gap-2" style={{margin: 6, padding: 10}}
     >
       {alert && (
         <motion.div
@@ -49,17 +49,19 @@ export default function AddCat({ onClose }: { onClose: () => void}) {
       )}
       <Input
         variant={"subtle"}
+        bg={'#17171b'}
         onChange={(e) => setCategory(e.currentTarget.value)}
         placeholder="Category name"
       />
       <div className="flex gap-2 w-full">
-        <Button onClick={onClose} className="flex-1 active:scale-95">
+        <Button  variant={'solid'} onClick={onClose} className="flex-1 active:scale-95 dark">
           Cancel
         </Button>
         <Button
           onClick={() => handleAddCat()}
           className="flex-1 active:scale-95"
           loading={loading}
+          variant={'solid'}
           loadingText={'Adding Category...'}
         >
           Add Category

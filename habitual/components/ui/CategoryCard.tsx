@@ -3,6 +3,8 @@ import {
   AnimatePresence,
   animate,
   useMotionValue,
+  Reorder,
+  useDragControls,
 } from "framer-motion";
 import {
   IoClose,
@@ -13,12 +15,13 @@ import {
 import { Category, Action } from "@/lib/definitions";
 import ActionForm from "../ActionForm";
 import ActionCard from "./ActionCard";
-import { Button, Input } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { Button, Input, Stack, StackSeparator } from "@chakra-ui/react";
+import { useState, useEffect, RefObject } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { FaCheck } from "react-icons/fa6";
+import { HiOutlineMenuAlt4 } from "react-icons/hi";
 
-const OPEN_X = 110;
+const OPEN_X = 120;
 
 interface CategoryCardProps {
   category: Category;
@@ -31,6 +34,8 @@ interface CategoryCardProps {
   toggleCheck: (id: number) => void;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  update: () => void;
+  container: RefObject<null>;
 }
 
 export default function CategoryCard({
@@ -44,11 +49,15 @@ export default function CategoryCard({
   toggleCheck,
   onEdit,
   onDelete,
+  update,
+  container,
 }: CategoryCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const [catName, setCatName] = useState(category.name || "");
   const x = useMotionValue(0);
+  const controls = useDragControls();
+  const MotionStack = motion.create('Stack')
 
   // Snap animation whenever isOpen changes
   useEffect(() => {
@@ -92,13 +101,15 @@ export default function CategoryCard({
   const OpenCat = openCategory === category.name;
 
   return (
-    <motion.div
+    <Reorder.Item
       key={category.id}
-      layout
-      className={`relative ${
-        OpenCat ? "rounded-[40px]" : "rounded-full"
-      } shadow-sm z-0`}
-      style={{ margin: "8px", paddingInline: "8px" }}
+      value={category}
+      dragListener={false}
+      dragControls={controls}
+      dragConstraints={container}
+      dragElastic={0.1}
+      className={`relative z-0 shadow-sm rounded-[40px] overflow-hidden bg-[#17171b]`}
+      style={{ margin: "8px" }}
     >
       {isOpen && (
         <AnimatePresence>
@@ -106,11 +117,14 @@ export default function CategoryCard({
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ bounce: 0.5, duration: 0.2 }}
-            className="absolute top-1 right-2 flex items-center gap-2 h-[55px]"
+            style={{ paddingInline: 10 }}
+            className="absolute top-0 right-0 flex items-center gap-2 h-full"
           >
             <Button
               size="sm"
-              h={"48px"}
+              rounded={"full"}
+              h={"70%"}
+              w={"15"}
               colorPalette="blue"
               className="cursor-pointer"
               onClick={() => {
@@ -122,7 +136,9 @@ export default function CategoryCard({
             </Button>
             <Button
               size="sm"
-              h={"48px"}
+              rounded={"full"}
+              h={"70%"}
+              w={"15"}
               colorPalette="red"
               className="cursor-pointer"
               onClick={() => {
@@ -137,7 +153,7 @@ export default function CategoryCard({
       )}
       {/* Category header */}
       <motion.div
-        className="flex justify-between items-center cursor-pointer z-10 rounded-md h-16"
+        className={`flex justify-between items-center cursor-pointer z-10 rounded-full h-16 ${OpenCat ? "" : "shadow-sm"}`}
         drag={"x"}
         style={{ x, padding: "8px" }}
         dragElastic={0.5}
@@ -147,11 +163,6 @@ export default function CategoryCard({
           const shouldOpen =
             info.offset.x < -OPEN_X / 2 || info.velocity.x < -200;
           setIsOpen(shouldOpen);
-        }}
-        onClick={() => {
-          if (Math.abs(x.get()) < 5) {
-            setOpenCategory(OpenCat ? null : category.name);
-          }
         }}
       >
         {edit ? (
@@ -179,17 +190,35 @@ export default function CategoryCard({
             </button>
           </div>
         ) : (
-          <h2 className="font-semibold text-lg">{category.name}</h2>
+          <div
+            style={{ paddingInline: 16 }}
+            className="flex justify-between items-center w-full"
+          >
+            <h2
+              onClick={() => {
+                if (Math.abs(x.get()) < 5) {
+                  setOpenCategory(OpenCat ? null : category.name);
+                }
+              }}
+              className="font-semibold text-lg w-full h-full"
+            >
+              {category.name}
+            </h2>
+            <HiOutlineMenuAlt4
+              id="category-card"
+              size={25}
+              onPointerDown={(e) => {
+                controls.start(e);
+              }}
+              onPointerUp={update}
+            ></HiOutlineMenuAlt4>
+          </div>
         )}
       </motion.div>
 
-      <AnimatePresence mode={'popLayout'}>
+      <AnimatePresence>
         {OpenCat && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.6 }}
             className="w-full h-fit flex justify-end z-10"
             style={{ marginTop: 8, paddingInlineEnd: 8, overflow: "hidden" }}
           >
@@ -224,13 +253,9 @@ export default function CategoryCard({
       </AnimatePresence>
       <AnimatePresence>
         {OpenCat && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-wrap"
-            style={{ paddingBlock: 8 }}
+          <Stack separator={<StackSeparator/>}
+            className="flex flex-wrap "
+            style={{ paddingBlock: 8, paddingInline: 8 }}
           >
             {actions
               .filter((action) => action.category_id === category.id)
@@ -250,9 +275,9 @@ export default function CategoryCard({
                   onDelete={onDelete}
                 />
               ))}
-          </motion.div>
+          </Stack>
         )}
       </AnimatePresence>
-    </motion.div>
+    </Reorder.Item>
   );
 }

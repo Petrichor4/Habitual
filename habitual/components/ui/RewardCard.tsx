@@ -13,7 +13,7 @@ import RedeemButton from "./RedeemButton";
 import { Incentives } from "@/lib/definitions";
 import { supabase } from "@/lib/supabaseClient";
 
-const OPEN_X = 108;
+const OPEN_X = 120;
 
 export default function RewardCard({
   onRedeem,
@@ -55,16 +55,12 @@ export default function RewardCard({
   };
 
   const handleDelete = async (id: number) => {
-
-    const { error } = await supabase
-    .from('incentives')
-    .delete()
-    .eq('id', id)
+    const { error } = await supabase.from("incentives").delete().eq("id", id);
 
     if (error) {
-      console.error('there was an error deleting this reward', error)
+      console.error("there was an error deleting this reward", error);
     }
-  }
+  };
 
   return (
     <div
@@ -83,7 +79,9 @@ export default function RewardCard({
             <Button
               size="sm"
               colorPalette="blue"
-              h={"80%"}
+              rounded={"full"}
+              h={"50px"}
+              w={"50px"}
               className="cursor-pointer"
               onClick={() => {
                 setEdit(true);
@@ -92,11 +90,17 @@ export default function RewardCard({
             >
               <IoPencilOutline />
             </Button>
-            <Button size="sm" colorPalette="red" h={"80%"} w={46} p={1}
-            onClick={() => {
+            <Button
+              size="sm"
+              colorPalette="red"
+              rounded={"full"}
+              h={"50px"}
+              w={"50px"}
+              onClick={() => {
                 handleDelete(item.id);
                 setIsOpen(false);
-              }}>
+              }}
+            >
               <IoTrashOutline />
             </Button>
           </motion.div>
@@ -104,7 +108,7 @@ export default function RewardCard({
       )}
       <motion.div
         drag="x"
-        style={{ x, paddingInline: "4px", margin: 4 }}
+        style={{ x, paddingInline: "4px", marginBlock: "4px" }}
         dragElastic={0.5}
         dragSnapToOrigin
         dragConstraints={{ left: -OPEN_X, right: 0 }}
@@ -115,7 +119,7 @@ export default function RewardCard({
         }}
         className={`${
           points >= item.cost ? "bg-gray-100" : "bg-gray-300 opacity-50"
-        } w-full ${edit ? 'h-40' : 'h-16'} rounded-full flex justify-between items-center shadow z-10`}
+        } w-full ${edit ? "h-40" : "h-16"} rounded-full flex justify-between items-center shadow z-10`}
       >
         {edit ? (
           <div
@@ -148,7 +152,11 @@ export default function RewardCard({
           >
             <div
               className="flex flex-wrap"
-              style={{ fontSize: "small", color: "gray" , paddingInline: '16px'}}
+              style={{
+                fontSize: "small",
+                color: "gray",
+                paddingInline: "16px",
+              }}
             >
               <h3
                 className="w-full"

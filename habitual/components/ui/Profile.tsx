@@ -5,6 +5,7 @@ import { Button } from "@chakra-ui/react";
 import { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { ColorModeButton } from "./color-mode";
 
 export default function Profile({ user }: { user: User }) {
   const handleSignOut = () => {

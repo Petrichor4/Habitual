@@ -26,4 +26,5 @@ export interface Category {
     id: number;
     name: string;
     actions?: Action[];
+    list_order: number;
 }

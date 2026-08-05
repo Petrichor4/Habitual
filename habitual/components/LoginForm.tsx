@@ -73,6 +73,8 @@ export default function LoginPage() {
 
     if (error) {
       console.warn("There was an error logging in:", error);
+      setAlert(error.message)
+      console.log(alert)
       setLoading(false);
       return;
     }
@@ -150,7 +152,7 @@ export default function LoginPage() {
                   Sign In
                 </Button>
               </div>
-              {alert && <Alert.Root variant={"outline"}>{alert}</Alert.Root>}
+              {alert && <Alert.Root colorPalette={"red"} color={"white"} variant={"solid"} p={"2.5"} >{alert}</Alert.Root>}
               <h2>
                 Dont have an account?
                 <a

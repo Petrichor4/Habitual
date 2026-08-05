@@ -92,7 +92,7 @@ export default function ActionCard({
             info.offset.x < -OPEN_X / 2 || info.velocity.x < -200;
           setIsOpen(shouldOpen);
         }}
-        className="relative z-10 bg-white rounded-full snap-center shadow"
+        className="relative z-10 rounded-full snap-center"
       >
         <div
           className="flex flex-wrap justify-between"
