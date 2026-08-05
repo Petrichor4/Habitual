@@ -11,6 +11,7 @@
   touch-action: none;
 }
 
-/* .login-page >* Input {
-  color: black;
-} */
+.login-page >* Input {
+  background-color: black;
+  color:white
+}

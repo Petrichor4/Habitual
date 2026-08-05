@@ -118,7 +118,7 @@ export default function RewardCard({
           setIsOpen(shouldOpen);
         }}
         className={`${
-          points >= item.cost ? "bg-gray-100" : "bg-gray-300 opacity-50"
+          points >= item.cost ? "bg-[#17171b]" : "bg-[#17171b] opacity-50"
         } w-full ${edit ? "h-40" : "h-16"} rounded-full flex justify-between items-center shadow z-10`}
       >
         {edit ? (
@@ -160,7 +160,7 @@ export default function RewardCard({
             >
               <h3
                 className="w-full"
-                style={{ fontSize: "medium", color: "black" }}
+                style={{ fontSize: "medium", color: "white" }}
               >
                 {item.title}
               </h3>

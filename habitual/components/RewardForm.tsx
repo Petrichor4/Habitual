@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FormEvent, useState } from "react";
 import GetUser from "./GetUser";
 
-export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
-  const [title, setTitle] = useState('');
+export default function RewardForm({ onCancel }: { onCancel: () => void }) {
+  const [title, setTitle] = useState("");
   const { user } = GetUser();
   const [cost, setCost] = useState<number | undefined>();
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState('');
+  const [alert, setAlert] = useState("");
 
   const handleAddReward = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,15 +18,15 @@ export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
     const { error } = await supabase
       .from("incentives")
       .insert([{ title, cost, user_id: user?.id }])
-      .eq('user_id', user?.id);
+      .eq("user_id", user?.id);
     if (error) {
       console.error(error);
-      if (error.code === '23502') {
-        setAlert('All fields are required')
+      if (error.code === "23502") {
+        setAlert("All fields are required");
       }
-      setTimeout(()=>{
-        setAlert('')
-      }, 3000)
+      setTimeout(() => {
+        setAlert("");
+      }, 3000);
       setLoading(false);
       return;
     }
@@ -35,36 +35,59 @@ export default function RewardForm({ onCancel }:{ onCancel: () => void }) {
   };
 
   return (
-    <main className="flex justify-center items-center h-fit w-full relative">
-        <AnimatePresence>
+    <motion.div
+      initial={{ y: -8, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: -8, opacity: 0 }}
+      className="flex justify-center items-center h-fit w-full relative"
+    >
+      <AnimatePresence>
         {alert && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className="fixed top-2 w-[300px] h-[100px] bg-black text-white text-3xl z-20 rounded shadow flex justify-center items-center"
-            style={{padding: '12px'}}
+            style={{ padding: "12px" }}
           >
             {alert}
           </motion.div>
         )}
       </AnimatePresence>
-        <form onSubmit={handleAddReward} className="w-11/12 bg-gray-100 rounded-md" style={{marginBlock: '4px', padding: 8}}>
-          <Stack >
-            <Input placeholder="Title" variant={'subtle'} onChange={(e) => setTitle(e.currentTarget.value)}></Input>
-            <NumberInput.Root variant={'subtle'}>
-              <NumberInput.Control />
-              <NumberInput.Input
-                onChange={(e) => setCost(Number(e.currentTarget.value))}
-                placeholder="Cost"
-              />
-            </NumberInput.Root>
-            <div className="flex gap-1">
-                <Button onClick={onCancel} className="flex-1 active:scale-95">Cancel</Button>
-                <Button loading={loading} loadingText={'Adding...'} type="submit" className="flex-1">Add</Button>
-            </div>
-          </Stack>
-        </form>
-    </main>
+      <form
+        onSubmit={handleAddReward}
+        className="w-11/12 rounded-md"
+        style={{ marginBlock: "4px", padding: 8 }}
+      >
+        <Stack>
+          <Input
+            placeholder="Title"
+            variant={"subtle"}
+            onChange={(e) => setTitle(e.currentTarget.value)}
+          ></Input>
+          <NumberInput.Root variant={"subtle"}>
+            <NumberInput.Control />
+            <NumberInput.Input
+              onChange={(e) => setCost(Number(e.currentTarget.value))}
+              placeholder="Cost"
+            />
+          </NumberInput.Root>
+          <div className="flex gap-1">
+            <Button onClick={onCancel} className="flex-1 active:scale-95" variant={"solid"}>
+              Cancel
+            </Button>
+            <Button
+              loading={loading}
+              loadingText={"Adding..."}
+              variant={"solid"}
+              type="submit"
+              className="flex-1"
+            >
+              Add
+            </Button>
+          </div>
+        </Stack>
+      </form>
+    </motion.div>
   );
 }

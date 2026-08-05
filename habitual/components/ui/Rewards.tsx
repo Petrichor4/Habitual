@@ -142,7 +142,7 @@ export default function Rewards({
       ) : (
         <div
           className="flex flex-wrap w-full"
-          style={{ marginTop: 4, marginBottom: 16 }}
+          style={{ marginTop: 8, marginBottom: 16 }}
         >
           {incentives.map((item) => (
             <RewardCard
