@@ -57,7 +57,7 @@ export default function CategoryCard({
   const [catName, setCatName] = useState(category.name || "");
   const x = useMotionValue(0);
   const controls = useDragControls();
-  const MotionStack = motion.create('Stack')
+  const MotionStack = motion.create("Stack");
 
   // Snap animation whenever isOpen changes
   useEffect(() => {
@@ -215,27 +215,23 @@ export default function CategoryCard({
           </div>
         )}
       </motion.div>
-
-      <AnimatePresence>
-        {OpenCat && (
-          <motion.div
-            className="w-full h-fit flex justify-end z-10"
-            style={{ marginTop: 8, paddingInlineEnd: 8, overflow: "hidden" }}
+      {OpenCat && (
+        <div
+          className="w-full h-fit flex justify-end z-10"
+          style={{ marginTop: 8, paddingInlineEnd: 8, overflow: "hidden" }}
+        >
+          <button
+            onClick={() =>
+              setAddAction(addAction === category.name ? null : category.name)
+            }
+            style={{ paddingInline: 6, fontSize: "small" }}
+            className="flex items-center gap-1"
           >
-            <button
-              onClick={() =>
-                setAddAction(addAction === category.name ? null : category.name)
-              }
-              style={{ paddingInline: 6, fontSize: "small" }}
-              className="flex items-center gap-1"
-            >
-              <IoCreateOutline />
-              Add action
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+            <IoCreateOutline />
+            Add action
+          </button>
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {addAction === category.name && OpenCat && (
           <motion.div
@@ -243,39 +239,48 @@ export default function CategoryCard({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15, zIndex: -10 }}
           >
-            <ActionForm
-              onCancel={() => setAddAction(null)}
-              category={category}
-              edit={false}
-            />
+            {
+              <ActionForm
+                onCancel={() => setAddAction(null)}
+                category={category}
+                edit={false}
+              />
+            }
           </motion.div>
         )}
       </AnimatePresence>
-      <AnimatePresence>
+      <AnimatePresence initial={false} presenceAffectsLayout>
         {OpenCat && (
-          <Stack separator={<StackSeparator/>}
-            className="flex flex-wrap "
-            style={{ paddingBlock: 8, paddingInline: 8 }}
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
           >
-            {actions
-              .filter((action) => action.category_id === category.id)
-              .sort((a, b) => {
-                if (a.reward === b.reward) {
-                  return a.id - b.id; // keeps stable order for same reward
-                }
-                return a.reward - b.reward;
-              })
-              .map((item) => (
-                <ActionCard
-                  key={item.id}
-                  item={item}
-                  checked={checkedMap[item.id] ?? false}
-                  onToggleCheck={toggleCheck}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              ))}
-          </Stack>
+            <Stack
+              separator={<StackSeparator />}
+              className="flex flex-wrap"
+              style={{ paddingBlock: 8, paddingInline: 8 }}
+            >
+              {actions
+                .filter((action) => action.category_id === category.id)
+                .sort((a, b) => {
+                  if (a.reward === b.reward) {
+                    return a.id - b.id; // keeps stable order for same reward
+                  }
+                  return a.reward - b.reward;
+                })
+                .map((item) => (
+                  <ActionCard
+                    key={item.id}
+                    item={item}
+                    checked={checkedMap[item.id] ?? false}
+                    onToggleCheck={toggleCheck}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                ))}
+            </Stack>
+          </motion.div>
         )}
       </AnimatePresence>
     </Reorder.Item>

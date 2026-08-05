@@ -39,9 +39,9 @@ export default function ActionCard({
   }, [isOpen]);
 
   return (
-    <div
+    <motion.div
       className="relative overflow-hidden w-full snap-x"
-      style={{ paddingBlock: "4px", paddingInline: 2 }}
+      style={{ paddingInline: 2 }}
     >
       {/* Background buttons */}
       {isOpen && (
@@ -55,7 +55,9 @@ export default function ActionCard({
             <Button
               size="sm"
               colorPalette="blue"
-              h={"60px"}
+              rounded={"full"}
+              h={"70%"}
+              w={"15"}
               className="cursor-pointer"
               onClick={() => {
                 onEdit(item.id);
@@ -67,9 +69,9 @@ export default function ActionCard({
             <Button
               size="sm"
               colorPalette="red"
-              h={"60px"}
-              w={46}
-              p={1}
+              rounded={"full"}
+              h={"70%"}
+              w={"15"}
               onClick={() => {
                 onDelete(item.id);
                 setIsOpen(false);
@@ -128,6 +130,6 @@ export default function ActionCard({
           )}
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

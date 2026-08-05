@@ -140,12 +140,10 @@ export default function Actions() {
           Add Category
         </button>
       </div>
-      <AnimatePresence>
         {addCat && <AddCat onClose={() => setAddCat(false)} />}
-      </AnimatePresence>
       <AnimatePresence>
         {edit && (
-          <motion.div className="fixed top-20 z-20 w-full bg-gray-100/90">
+          <motion.div className=" z-20 w-full ">
             <ActionForm
               edit={!!edit}
               action={actions.find((item) => item.id === edit)}
@@ -162,25 +160,27 @@ export default function Actions() {
           <h4>Add a category to begin</h4>
         </div>
       ) : (
-        <Reorder.Group axis="y" values={categories} onReorder={setCategories} ref={container}>
-          {categories.map((cat) => (
-              <CategoryCard
-                key={cat.id}
-                container={container}
-                category={cat}
-                actions={actions}
-                openCategory={openCategory}
-                setOpenCategory={setOpenCategory}
-                addAction={addAction}
-                setAddAction={setAddAction}
-                checkedMap={checkedMap}
-                toggleCheck={toggleCheck}
-                onEdit={(id) => setEdit(id)}
-                onDelete={handleDelete}
-                update={updateCategoryOrder}
-              />
-          ))}
-        </Reorder.Group>
+        <motion.div layoutId="categories">
+          <Reorder.Group axis="y" values={categories} onReorder={setCategories} ref={container}>
+            {categories.map((cat) => (
+                <CategoryCard
+                  key={cat.id}
+                  container={container}
+                  category={cat}
+                  actions={actions}
+                  openCategory={openCategory}
+                  setOpenCategory={setOpenCategory}
+                  addAction={addAction}
+                  setAddAction={setAddAction}
+                  checkedMap={checkedMap}
+                  toggleCheck={toggleCheck}
+                  onEdit={(id) => setEdit(id)}
+                  onDelete={handleDelete}
+                  update={updateCategoryOrder}
+                />
+            ))}
+          </Reorder.Group>
+        </motion.div>
       )}
     </div>
   );

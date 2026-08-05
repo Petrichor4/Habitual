@@ -35,7 +35,7 @@ export default function RedeemButton({
             animate={{ scale: 1.2, opacity: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute bg-gray-400/70 size-13 -bottom-[60%] left-[7%] rounded-full"
+            className="absolute bg-gray-400/70 size-13 bottom-[-60%] left-[7%] rounded-full"
           />
         )}
       </AnimatePresence> */}

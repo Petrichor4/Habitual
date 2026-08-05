@@ -45,16 +45,17 @@ export default function Tab({
     <>
       <main className="flex justify-center">
         <section className="content flex flex-wrap justify-center w-full max-w-[600px]">
-          <div className="flex justify-between w-[164px]">
+          <div className="flex justify-center w-[80%]">
             {tabs.map((tab) => (
               <button 
               key={tab.id} 
               onClick={() => setSelectedTab(tab.id)} 
-              className={`${selectedTab === tab.id ? "" : "hover:cursor-pointer" } relative rounded-full bg-[#17171b]`}>
+              style={{paddingInline: 16, paddingBlock: 6}}
+              className={`${selectedTab === tab.id ? "" : "hover:cursor-pointer" } relative rounded-full w-40`}>
                 {selectedTab === tab.id && (
-                  <motion.div layoutId="pill" className="absolute inset-0 bg-[#17171b] rounded-full mix-blend-difference" />
+                  <motion.div layoutId="pill" className="absolute inset-0 bg-[#17171b]" style={{borderRadius: 9999}} />
                 )}
-                {tab.label}
+                <span className="relative z-10">{tab.label}</span>
               </button>
             ))}
           </div>
